@@ -1,0 +1,21 @@
+LATEX           = platex
+MAKEINDEX       = mendex -U
+DVIPDFM         = dvipdfmx
+
+TEXINPUTS   = CategoryTheoryHandy.tex CategoryTheory.tex
+LaTeXDocument(CategoryTheory, CategoryTheory)
+LaTeXDocument(CategoryTheoryHandy, CategoryTheoryHandy)
+TEXDEPS[]   =
+   Chapter05.tex
+   mymacros.sty
+   Preface.tex
+   Chapter01.tex 
+   Chapter02.tex
+   Chapter03.tex
+   Chapter04.tex
+
+.DEFAULT: CategoryTheoryHandy.pdf CategoryTheoryHandy.dvi CategoryTheory.pdf CategoryTheory.dvi
+.BUILD_SUCCESS: 
+  /usr/bin/open -aSkim -g CategoryTheoryHandy.pdf
+  (git commit -am "$(shell date +%Y-%m-%d\ %T\ %Z)" && git push origin master) || echo "nothing to commit nor push"
+

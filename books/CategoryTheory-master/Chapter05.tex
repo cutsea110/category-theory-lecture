@@ -1,0 +1,905 @@
+%#!platex -src-specials CategoryTheory.tex
+\newcommand{\Sub}{\mathrm{Sub}}
+\chapter{極限と余極限}
+この章では，まず今までに見た定義と関連する話題として，部分対象と引き戻しという概念を簡単に議論する．これらの使い方に関して学ぶことも目的の一つではあるが，すぐにこれらの概念が必要になるから，というのが主な理由である．続いて，一般的な極限の概念を定義し，より体系的に調べてゆく．今までに出て来た抽象的特徴付けの多くは，極限の特別な場合である．勿論，その双対として余極限という概念もあり，こちらも多くの興味深い応用がある．第 \ref{Ch6} 章でもう一つ基礎的な概念を手短かに学んだ後，「高次圏論」とでも呼ぶべき話題へと移っていく．
+
+\section{部分対象}
+集合 $X$ の部分集合 $U \subseteq X$ はイコライザとして表現出来，そのイコライザは常にモノ射となることを見た．よって，モノ射を部分集合の一般化とみなすことは自然なことである．つまり， $\Groups$ でのモノ射は部分群，${\bf Top}$ でのモノ射は部分空間としてみなせる，等といった具合である．
+
+大まかな考え方は次の通りである．ある種の構造を持った集合（以後，「ガジェット」と呼ぶことにする）から成る圏 ${\bf C}$ のモノ射
+\[
+ m: M \mono X
+\]
+が与えられているとする．この時，$m$ の像による部分{\bfseries 集合}（$m(M)$ などとも書かれる）
+\[
+ \Set{m(y) | y \in M} \subseteq X
+\]
+は，しばしば $m$ を介して $M$ と同型となる $X$ の部分ガジェットとなる．
+\[
+ m: M \congto m(M) \subseteq X
+\]
+より一般的に，像を取るための台写像が存在しないような圏であっても，$m: M \mono X$ それ自身が $X$ の「一部分」を決定していると考えることが出来る．
+
+\begin{definition}
+ 圏 ${\bf C}$ における対象 $X$ の{\bfseries 部分対象}（{\itshape subobject}）とは，モノ射
+ \[
+  m: M \mono X
+ \]
+ のことである．$X$ の部分対象 $m, m'$ について，その間の射 $f: m \to m'$ は，${\bf C}/X$ の射
+ \begin{center}
+  \begin{tikzpicture}
+   \matrix [matrix of math nodes, row sep=1.25cm, column sep=1cm] {
+     |(M)| M & |(M')| M' \\
+             & |(X)| X\\
+   };
+   \path[draw, ->]
+     (M)  edge node {$f$}  (M')
+          edge node [swap] {$m$}  (X)
+     (M') edge node {$m'$} (X);
+  \end{tikzpicture}
+ \end{center}
+ である．以上より，$X$ の ${\bf C}$ における部分対象から成る圏
+ \[
+  \Sub_{\bf C}(X)
+ \]
+ が得られる．
+\end{definition}
+
+定義より，$m'$ がモノ射であることから上の図式を満たすような射 $f$ は高々一つしか存在しない．よって，$\Sub_{\bf C}(X)$ はプレ順序圏となる．部分対象の{\bfseries 包含関係}を次で定める．
+\[
+ m \subseteq m' \Iff f: m \to m' \text{が存在する}
+\]
+
+最後に，$m, m'$ が部分対象として同型であるとき，つまり $m \subseteq m'$ かつ $m' \subseteq m$ であるとき，$m$ と $m'$ は{\bfseries 同値}（{\itshape equivalent}）であるといい，$m \equiv m'$ と書く．この状況は，次の図式の二つの三角形を可換にするような $f$ と $f'$ が存在するときにのみ起こる．
+\begin{center}
+ \begin{tikzpicture}
+   \matrix [matrix of math nodes, row sep=1.25cm, column sep=1cm] {
+     |(M)| M & |(Mp)| M' \\
+             & |(X)| X\\
+   };
+   \path[->]
+     (M.340)  edge node [swap] {$f$}  (Mp.200)
+     (Mp.165) edge node [swap] {$f'$} (M.20)
+     (M)  edge node [swap] {$m$}  (X)
+     (M') edge node {$m'$} (X);
+ \end{tikzpicture}
+\end{center}
+
+上の図式において， $m = m'f = mf'f$ であり， $m$ がモノ射であることから $f'f = 1_M$ となり，同様に $ff' = 1_{M'}$ となる．よって，$f$ を介して $M \cong M'$ となる．このことから，{\bfseries 同値な部分対象は同型なドメインを持つ}ことがわかる．モノ射 $m : M \mono X$ が明らかなとき，記法と言語を濫用して，$M$ を部分対象と呼ぶことがある．
+
+\begin{remark}
+ プレ順序集合
+ \[
+  \Sub_{\bf C}(X)
+ \]
+ を同値関係 $\equiv$ で割って poset にすると便利なことがしばしばある．このとき部分対象は互いに包含するという関係によるモノ射の同値類となる．
+\end{remark}
+
+$\Sets$ では，こちらの部分対象の概念の下で，同型
+\[
+ \Sub_{\Sets}(X) \cong P(X)
+\]
+が得られる．つまり，任意の部分対象を部分集合により一意に表現することが出来る．「部分対象」と云った際に，それがモノ射によるものであるのか，その同値類によるものであるのかはその都度明らかにすることにし，両方の概念を用いることにする．
+
+$M' \subseteq M$ のとき，図式
+\begin{diagram}
+    \matrix [matrix of math nodes, row sep=1cm, column sep=1cm] {
+     |(M)| M & |(M')| M' \\
+             & |(X)| X\\
+   };
+   \path[draw, ->]
+     (M)  edge node {$f$}  (M')
+          edge(X)
+     (M') edge(X);
+\end{diagram}
+に示すような $f$ はモノ射となることに注意すれば，$M'$ は $M$ の部分対象となることがわかる．よって，モノ射同士の合成は再びモノ射となることから，合成による函手
+\[
+ \Sub(M) \to \Sub(M')
+\]
+が得られる．
+
+$X$ の一般化元
+\[
+ z: Z \to X
+\]
+の言葉を使って，そうした一般化元と部分対象 $m: M \mono X$ の間の{\bfseries 局所的な所属関係}（{\itshape local membership}）
+\[
+ z \in_X M
+\]
+を次のように定めることが出来る．
+\[
+ z \in_X M \Iff z = mf \text{となる} f: Z \to M \text{が存在する}
+\]
+$m$ がモノ射であることより，もし $z$ が $f$ により上のように分解されるなら，それは一意に決定される．
+
+\begin{example}
+ イコライザ
+ \begin{diagram}
+  \node (E) {$E$};
+  \node (A) [right of=E] {$A$};
+  \node (B) [right of=A] {$B$};
+  \path[->]
+    (E) edge (A)
+    (A.20)  edge node        {$f$} (B.160)
+    (A.340) edge node [swap] {$g$} (B.200);
+ \end{diagram}
+ を考えると，これは次の性質を満たす部分対象 $E$ となっている．
+ \[
+  z \in_A \iff f(z) = g(z)
+ \]
+ よって， $E$ は $f(z) = g(z)$ となる一般化元 $z: Z \to A$ からなる部分対象と見做すことが出来る．次のように書くと示唆的である．
+ \[
+  E = \Set{ z \in Z | f(z) = g(z)} \subseteq A
+ \]
+ となる．圏論的論理学では，このような部分集合に対する体系を与えることで，こうした直観を精密化する方法を開発出来る．
+\end{example}
+
+\section{引き戻し}
+引き戻しの概念は，数学や論理学で直積と同じくらい非常によく現れるものの一つである．これは，共通部分と逆像の一般化になっている．
+
+定義から始めよう．
+\begin{definition}
+ 圏 ${\bf C}$ で，下図のように $\cod(f) = \cod(g)$ なる射が与えられているとする．
+ \begin{diagram}
+  \matrix [matrix of math nodes, row sep=1cm, column sep=1cm] {
+           & |(A)| A \\
+   |(B)| B & |(C)| C \\
+  };
+  \path[draw, ->]
+    (A) edge node [swap] {$f$} (C)
+    (B) edge node        {$g$} (C);
+ \end{diagram}
+ このとき，$f$ と $g$ の{\bfseries 引き戻し}（{\itshape pullback}）とは，$fp_1 = gp_2$ を満たす普遍的な射の組
+ \begin{diagram}
+  \matrix [matrix of math nodes, row sep=1cm, column sep=1cm] {
+   |(P)| P & |(A)| A \\
+   |(B)| B \\
+  };
+  \path[draw, ->]
+    (P) edge node [swap] {$p_1$} (A)
+    (P) edge node        {$p_2$} (B);
+ \end{diagram}
+ のことである．つまり，$fz_1 = gz_2$ を見たすような任意の射 $z_1:Z\to A$ と $z_2: Z \to B$ が与えられたとき，$z_1 = p_1 u$ かつ $z_2 = p_2 u$ となるような射 $u: Z \to P$ が一意に存在する，ということである．この状態を表したのが次の図式である．
+ \begin{center}
+  \begin{tikzpicture}
+  \matrix [matrix of math nodes, row sep=1cm, column sep=1cm] {
+   |(Z)| Z\\
+           & |(P)| P & |(A)| A \\
+           & |(B)| B & |(C)| C \\
+  };
+  \path[draw, ->, font=\scriptsize, >=stealth]
+    (P) edge node [swap] {$p_1$} (A)
+    (P) edge node        {$p_2$} (B)
+    (Z) edge node        {$z_1$} (A)
+        edge node [swap] {$z_2$} (B)
+    (A) edge node        {$f$}   (C)
+    (B) edge node [swap] {$g$}   (C);
+  \path[draw, ->, dotted, font=\scriptsize]
+    (Z) edge node [description, sloped, >=stealth] {$u$} (P);
+  \end{tikzpicture}
+ \end{center}
+ 直積のような記号で引き戻しを書くこともある．
+ \begin{center}
+  \begin{tikzpicture}
+  \matrix [matrix of math nodes, row sep=1cm, column sep=1cm] {
+   |(Z)| Z\\
+           & |(P)| A \times_{C} B & |(A)| A \\
+           & |(B)| B              & |(C)| C \\
+  };
+  \path[draw, ->, font=\scriptsize, >=stealth]
+    (P) edge node [swap] {$p_1$} (A)
+    (P) edge node        {$p_2$} (B)
+    (Z) edge node        {$z_1$} (A)
+        edge node [swap] {$z_2$} (B)
+    (A) edge node        {$f$}   (C)
+    (B) edge node [swap] {$g$}   (C);
+  \path[draw, ->, dotted, font=\scriptsize]
+    (Z) edge node [description, sloped, >=stealth]
+             {$\braket{z_1, z_2}$} (P);
+  \end{tikzpicture}
+ \end{center}
+ 引き戻しは，普遍写像性により定められるので，明らかに同型を除いて一意である．つまり，射の組に対して二つの引き戻しが与えられた時，それらの間の一意な射は互いに逆射となっている．
+\end{definition}
+
+一般化元の言葉を用いれば，任意の $z \in A \times_C B$ は $fz_1 = gz_2$ なる $z_1, z_2$ によって $z = \braket{z_1, z_2}$ と表せる．これにより，
+\[
+ A \times_C B = \Set{ \braket{z_1, z_2} \in A \times B | fz_1 = gz_2}
+\]
+は，$f \circ \pi_1$ と $g \circ \pi_2$ のイコライザにより定まる $A \times B$ の部分対象であるかのように考えることが出来る．実際，そうなっている．
+
+\begin{prop}
+ 直積とイコライザを持つ圏において，射の角
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1cm, column sep=1cm] {
+           & |(B)| B\\
+   |(A)| A & |(C)| C\\
+  };
+  \path[->]
+    (B) edge node {$g$} (C)
+    (A) edge node [swap] {$f$} (C);
+ \end{diagram}
+ が与えられているとする．$e$ を $f\pi_1$ と $g\pi_2$ のイコライザし，$p_1 = \pi_1, p_2 = \pi_2e$ とおいて，次の図式を考える．
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1cm, column sep=1cm] {
+   |(E)| E \\
+           & |(AxB)| A \times B  & |(B)| B\\
+           & |(A)|   A           & |(C)| C\\
+  };
+  \path[->]
+    (E) edge node [description, sloped] {$e$} (AxB)
+        edge node [swap] {$p_1$} (A)
+        edge node        {$p_2$} (B)
+    (AxB) edge node {$\pi_1$} (A)
+          edge node [swap] {$\pi_2$} (B)
+    (B) edge node {$g$} (C)
+    (A) edge node [swap] {$f$} (C);
+ \end{diagram}
+ このとき，$E, p_1, p_2$ は $f$ と $g$ の引き戻しとなる．逆に，$E, p_1, p_2$ が $f$ と $g$ の引き戻しであるとき，射
+ \[
+  e = \braket{p_1, p_2} : E \to A \times B
+ \]
+ は $f\pi_1$ と $g\pi_2$ のイコライザとなる．
+\end{prop}
+
+\begin{proof}
+ $fz_1 = gz_2$ となるような
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1cm, column sep=1cm] {
+   |(Z)| Z & |(B)| B\\
+   |(A)| A\\
+  };
+  \path[->]
+    (Z) edge node {$z_2$} (B)
+        edge node [swap] {$z_1$} (A);
+ \end{diagram}
+ を取る．$\braket{z_1, z_2}: Z \to A \times B$ が取れるので，
+ \[
+  f\pi_1\braket{z_1, z_2} = fz_1 = gz_2 = g \pi_2\braket{z_1, z_2}
+ \]
+ となる．よって，$eu = \braket{z_1, z_2}$ となるイコライザへの射 $u : Z \to E$ が存在する．このことから，
+ \[
+  p_1u = \pi_1 eu = \pi_1\braket{z_1, z_2} = z_1
+ \]
+ かつ
+ \[
+  p_2u = \pi_2 eu = \pi_2\braket{z_1, z_2} = z_2
+ \]
+ となる．もし $u' : Z \to E$ も $p_i u' = z_i, i = 1, 2$ を満たすなら， $\pi_ieu' = z_i$ となるので，$eu' = \braket{z_1, z_2} = eu$ が云え，$e$ がモノ射であることから $u = u'$ となる．
+
+ 逆も同様に示せる．
+\end{proof}
+
+\begin{corollary}
+ 圏 ${\bf C}$ が二項直積を持つならば，${\bf C}$ は引き戻しも持つ．
+\end{corollary}
+
+以上の議論から，$\Sets$ での引き戻しを直積の部分集合として陽に構成することが出来る．
+\[
+ \Set{\braket{a, b} | fa = gb} = A \times_C B \hookrightarrow A \times B
+\]
+
+\begin{example}
+ 函数 $f: A \to B$ と部分集合 $V \subseteq B$ を取る．通常通り，
+ \[
+  f^{-1}(V) = \Set{a \in A | f(a) \in V} \subseteq A
+ \]
+ とし，図式
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(inv)| f^{-1}(V) & |(V)| V\\
+   |(A)| A           & |(B)| B\\
+  };
+  \path[->]
+    (inv) edge node {$\bar f$} (V)
+    (inv) edge node [swap] {$j$} (A)
+    (A)   edge node [swap] {$f$} (B)
+    (V)   edge node {$i$} (B);
+ \end{diagram}
+ を考える．ここで，$i, j$ は標準的な包含写像であり，$\bar{f}$ は $f$ の $f^{-1}(V)$ への制限の自明な分解である（$a \in f^{-1}(V) \Rightarrow f(a) \in V$ より）．
+
+ この図式は引き戻しとなる（任意の $z : Z \to A$ に対し $z \in f^{-1}(V) \Leftrightarrow fz \in V$ に注意）． よって，逆像
+ \[
+  f^{-1}(V) \subseteq A
+ \]
+ は引き戻しとして{\bfseries 同型を除いて一意に}決定される．
+\end{example}
+
+前の例が示唆する通り，引き戻しを用いて $\Sets$ 以外の圏で逆像を定義することが出来る．事実，任意の圏において引き戻し
+
+\begin{diagram}
+ \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(inv)| A \times_M B & |(V)| M\\
+   |(A)| A              & |(B)| B\\
+ };
+ \path[->]
+    (inv) edge (V)
+          edge node [swap] {$m'$} (A)
+    (A)   edge node [swap] {$f$} (B)
+    (V)   edge node {$m$} (B);
+\end{diagram}
+が与えられたとき，$m$ がモニックならば $m'$ もモニックとなる（演習問題！）．
+
+よって，$f: A \to B$ をひとつ固定すれば，引き戻しを取ることにより，写像
+\[
+ f^{-1}: \begin{aligned}[t]
+	  \Sub(B) &\to \Sub(A)\\
+	  m &\mapsto m'
+	 \end{aligned}
+\]
+が誘導されることが判る．そこで，次の章では $f^{-1}$ が函手となることを示し，$f^{-1}$ が部分対象の同値性を保つこと，即ち，
+\[
+ M \equiv N \Rightarrow f^{-1}(M) \equiv f^{-1}(N)
+\]
+が成立することを示そう．
+
+\section{引き戻しの性質}
+まずは次の単純な補題から始めよう．この補題はいたるところで出て来る．
+
+\begin{lemma}[Two-pullbacks]
+ 引き戻しを持つ圏において，次の可換図式を考える．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(F)| F & |(E)| E & |(D)| D \\
+   |(A)| A & |(B)| B & |(C)| C\\
+  };
+  \path[->]
+    (F) edge node {$f'$} (E)
+        edge node [swap] {$h''$} (A)
+    (E) edge node {$g'$} (D)
+        edge node {$h'$} (B)
+    (D) edge node {$h$} (C)
+    (A) edge node [swap] {$f$} (B)
+    (B) edge node [swap] {$g$} (C);
+ \end{diagram}
+ \begin{enumerate}
+  \item 二つの正方形が共に引き戻しであれば，外側の長方形も引き戻しとなる．即ち，
+	\[
+	 A \times_B (B \times_C D) \cong A \times_C D
+	\]
+  \item 右側の正方形と外側の長方形が引き戻しなら，左側の正方形も引き戻しとなる．
+ \end{enumerate}
+\end{lemma}
+\begin{proof}
+ 図式追跡．
+\end{proof}
+
+\begin{corollary}
+ 可換三角形の引き戻しは可換三角形となる．特に，次の「プリズム図式」の右端のような可換三角形が与えられたとする．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(A')| A' &           & & |(A)| A \\
+             & |(B')| B' &      &    & |(B)| B\\
+   |(C')| C' &           & & |(C)| C \\
+  };
+  \path[->]
+    (A') edge node [swap, near start] {$\alpha'$}  (C')
+         edge node [swap] {$h_\alpha$} (A)
+    (A)  edge node [swap, near start] {$\alpha$}   (C)
+         edge node        {$\gamma$}   (B)
+    (B') edge node [swap] {$h_\beta$}  (B)
+         edge node        {$\beta'$}   (C')
+    (B)  edge node        {$\beta$}    (C)
+    (C') edge node [swap] {$h$}        (C);
+  \path[->, dotted]
+    (A') edge node        {$\gamma'$}  (B');
+ \end{diagram}
+ このとき，任意の $h:C' \to C$ に対し，もし左端のような引き戻し $\alpha', \beta'$ が構成出来れば，図のような $\gamma'$ が一意に存在して，左の三角形と上部の四角形を可換とする．特に，上の四角形は引き戻しとなる．
+\end{corollary}
+\begin{proof}
+ Two-pullback 補題を使う．
+\end{proof}
+
+\begin{prop}
+ 引き戻しは函手である．即ち，引き戻しを持つ圏 ${\bf C}$ の任意の射 $h: C' \to C$ に対し，
+ \[
+  (A \xrightarrow{\alpha} C) \mapsto (C' \times_C A \xrightarrow{\alpha'} C')
+ \]
+ で定められる函手
+ \[
+  h^*: {\bf C}/C \to {\bf C}/C'
+ \]
+ が存在する．ここで，$\alpha'$ は  $h$ に沿った $\alpha$ の引き戻しであり，$\gamma: \alpha \to \beta$ に対する作用は前の系によって与えられているものとする．
+\end{prop}
+\begin{proof}
+ 確かめるべきことは次の二つである．
+ \begin{align*}
+  h^*:(1_X) &= 1_{h^*X}\\
+  h^*(g \circ f) &= h^*(g) \circ h^*(f)
+ \end{align*}
+ これらは two-pullbacks の補題を繰り返し適用することで確認できる．例えば，最初の条件を示すために次の図式を考えよう．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm]{
+   |(A')|  A' & |(A)|  A\\
+   |(A'2)| A' & |(A2)| A\\
+   |(C')|  C' & |(C)|   C\\
+  };
+  \path[->]
+    (A')  edge node [swap] {$h'$}      (A)
+          edge node [swap] {$1_{A'}$}  (A'2)
+    (A)   edge node        {$1_A$}     (A2)
+    (A'2) edge node [swap] {$h'$}      (A2)
+          edge node [swap] {$\alpha'$} (C')
+    (A2)  edge node        {$\alpha$}  (C)
+    (C')  edge node [swap] {$h$}       (C);
+ \end{diagram}
+ 下の正方形が引き戻しであれば，明らかに外側の長方形も引き戻しとなり，従って上部の正方形も引き戻しとなる．よって，
+ \[
+  h^* 1_\alpha = 1_{\alpha'} = 1_{h^* \alpha}
+ \]
+\end{proof}
+
+\begin{corollary}
+ ${\bf C}$ を引き戻しを持つ圏とする．任意の ${\bf C}$ の射 $f: A \to B$ に対し，圏と函手に関する次の図式を得る
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(SubA)| \Sub(A)   & |(SubB)| \Sub(B) \\
+   |(C/A)|  {\bf C}/A & |(C/B)|  {\bf C}/B\\
+  };
+  \path[->]
+   (SubA) edge                        (C/A)
+   (SubB) edge node [swap] {$f^{-1}$} (SubA)
+          edge                        (C/B)
+   (C/B)  edge node        {$f^*$}    (C/A);
+ \end{diagram}
+ $f^{-1}$ が $f^*$ を部分圏 $\Sub(B)$ へ制限したものとして定義されているため，この図式は可換である．よって，特に $f^{-1}$ の函手性より，
+ \[
+  M \subseteq N \Rightarrow f^{-1}(M) \subseteq f^{-1}(N)
+ \]
+ が成立する．以上より，$M \equiv N$ ならば $f^{-1}(M) \equiv f^{-1}(N)$ が従う．よって，$f^{-1}$ は同値類上でも定義することが出来る．
+ \[
+  {f^{-1}/\equiv }: {\Sub(B)/\equiv} \to {\Sub(A)/\equiv}
+ \]
+\end{corollary}
+
+\begin{example}
+ $\Sets$ での引き戻しを考える．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(E)| E & |(B)| B \\
+   |(A)| A & |(C)| C\\
+  };
+  \path[->]
+    (E) edge node {$f'$} (B)
+        edge node [swap] {$g'$} (A)
+    (B) edge node {$g$} (C)
+    (A) edge node [swap] {$f$} (C);
+ \end{diagram}
+ このとき，
+ \[
+  E = \Set{\braket{a, b} | f(a) = g(b)}
+ \]
+ は，イコライザ
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+    |(E)| E & |(AxB)| A \times B & |(C)| C \\
+  };
+  \path[->]
+    (E) edge node {$\braket{f', g'}$} (AxB)
+    (AxB.10) edge node {$f\pi_1$} (C.160)
+    (AxB.350) edge node [swap]{$g \pi_2$} (C.200);
+ \end{diagram}
+ として構成出来ることは既に見た．
+
+ ここで，$B = 1, C = 2 = \{\bot, \top\}, g = \top:1 \to 2$ とすると，イコライザ
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+    |(E)| E & |(AxB)| A \times 1 & |(C)| 2 \\
+  };
+  \path[->]
+    (E) edge node {$\braket{f', g'}$} (AxB)
+    (AxB.10) edge node {$f\pi_1$} (C.160)
+    (AxB.350) edge node [swap]{$g \pi_2$} (C.200);
+ \end{diagram}
+ は，既に「命題函数」 $f:A \to 2$ の「外延」として説明したものだ．したがって，部分集合 $U \subseteq A$ とその特性函数 $\xi_U: A \to 2$ との関係を引き戻しによって言い換えることが出来る．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(E)| E & |(B)| 1\\
+   |(A)| A & |(C)| 2\\
+  };
+  \path[->]
+    (E) edge node {$!$}            (B)
+        edge                       (A)
+    (B) edge node {$\top$}         (C)
+    (A) edge node [swap] {$\xi_U$} (C);
+ \end{diagram}
+ 函数 $\varphi: A \to 2$ に対し「外延」
+ \[
+  V_\phi = \Set{x \in A | \varphi(x) = \top}
+ \]
+ を与える同型
+ \[
+  2^A \cong \Pow(A)
+ \]
+ は引き戻しとして正確に説明出来る．
+ \[
+  V_\phi = \Set{x \in A | \varphi(x) = \top} = \varphi^{-1}(\top)
+ \]
+ さて，任意の函数
+ \[
+  f: B \to A
+ \]
+ が与えられたとき，上の例でやったように引き戻しとして誘導される逆像演算
+ \[
+  f^{-1}: \Pow(A) \to \Pow(B)
+ \]
+ を考える．外延 $V_\varphi$ を取り，次の二つの引き戻しからなる図式を考える．
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(inv)| f^{-1}(V_\varphi) & |(V)| V_\varphi & |(one)| 1 \\
+   |(B)| B                   & |(A)| A         & |(two)| 2\\
+  };
+  \path[->]
+    (inv) edge (V)
+          edge (B)
+    (B)   edge node [swap] {$f$} (A)
+    (V)   edge (A) edge (one)
+    (A)   edge node [swap] {$\varphi$} (two)
+    (one) edge node {$\top$} (two);
+ \end{diagram}
+ すると（two-pullbacks の補題より），
+ \[
+  f^{-1}(V_\varphi) = f^{-1}(\varphi^{-1}(\top)) = (\varphi f)^{-1}(\top) = V_{\varphi f}
+ \]
+ を得る．これは論理学的には，命題関数 $\varphi$ に出現する $A$ 上の変数 $x$ を $f$ によって置換することが，$f$ に沿った対応する外延の引き戻し
+ \[
+  f^{-1}(\Set{x \in A | \varphi(x) = \top}) = \Set{y \in B | \varphi(f(y)) = \top}
+ \]
+ をとる操作としてモデル化出来る，という事実と対応している．
+
+ 任意の函数 $f:A \to B$ に対し，
+  \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(2A)| 2^A & |(PA)| \Pow(A)\\
+   |(2B)| 2^B & |(PB)| \Pow(B)\\
+  };
+  \path[->]
+    (2A) edge node        {$\cong$}  (PA)
+         edge node [swap] {$2^f$}    (2B)
+    (PA) edge node        {$f^{-1}$} (PB)
+    (2B) edge node [swap] {$\cong$}  (PB);
+ \end{diagram}
+ が可換となることは既に示した．ここで，$2^f:2^A \to 2^B$ は前への合成 $2^f(g) = g \circ f$ である．このような状況を，同型
+ \[
+  2^A \cong \Pow(A)
+ \]
+ は $A$ において{\bfseries 自然}({\itshape natural})である，お云う．この条件は，単に各対象について同型が存在するという条件よりも明らかに遥かに強いものになっている．こうした「自然性」は後程体系的に考察していくことになる．実際，この概念は圏論が発生する契機となった現象の一つである．
+\end{example}
+
+\begin{example}
+ $I$ を添字の集合とし，$I$ で添字付けられた集合族
+ \[
+  (A_i)_{i \in I}
+ \]
+ を考えよう．任意の函数 $\alpha: J \to I$ が与えられたとき，「$\alpha$ によって添字を付け替える」ことで得られる集合族
+ \[
+  (A_{\alpha(j)})_{j \in J}
+ \]
+ が存在する．この添字の付け直しも引き戻しを用いて説明することが出来る．特に，各集合 $A_i$ に対し，値 $i$ を取る定数函数 $p_i: A_i \to I$ を取り，余積の上に誘導される函数
+ \[
+  p = [p_i] : \coprod_{i \in I} A_i \to I
+ \]
+ を考える．添字をつけ直した族 $(A_{\alpha(j)})_{j \in J}$ は，次の図式に示すような $\alpha$ に沿った引き戻しとして得られる．
+  \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(SJ)| \displaystyle \coprod_{j \in J} A_{\alpha(j)} & |(SI)| \displaystyle \coprod_{i \in I} A_i\\
+   |(J)| J           & |(I)| I\\
+  };
+  \path[->]
+    (SJ) edge (SI)
+         edge node [swap] {$q$} (J)
+    (SI) edge node {$p$} (I)
+    (J)  edge node [swap] {$\alpha$} (I);
+ \end{diagram}
+ここで，$q$ は $(A_{\alpha(j)})_{j \in J}$ に関する $p$ と同様な添字射影である．言い換えれば，
+ \[
+  J \times_I (\coprod_{i \in I} A_i) \cong \coprod_{j \in J} A_{\alpha(j)}
+ \]
+ が成立するということである．詳細の確認は，読者への教育的な演習問題とする．
+\end{example}
+
+\section{極限}
+直積，イコライザ，そして引き戻しの概念が互いに無関係な物ではないことを見てきた．それらの間の正確な関係を述べたのがこの命題である．
+
+\begin{prop}
+ 圏が有限直積とイコライザを持つ必要十分条件は，その圏が引き戻しと終対象を持つことである．
+\end{prop}
+\begin{proof}
+ 有限直積とイコライザから引き戻しと終対象を構成する方法については既に見た．逆を示すため，${\bf C}$ を引き戻しと終対象 $1$ を持つ圏とする．
+ \begin{itemize}
+  \item 次の図式に示すように，任意の対象 $A, B$ について，明らかに $A \times B \cong A \times_1 B$ が成立する．
+	  \begin{diagram}
+	   \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+	   |(AxB)| A \times B & |(B)| B\\
+	   |(A)| A            & |(one)| 1\\
+	   };
+	   \path[->]
+	   (AxB) edge (B)
+	         edge (A)
+	   (A)   edge (one)
+	   (B)   edge (one);
+	  \end{diagram}
+  \item 任意の射 $f, g: A \to B$ に対し，そのイコライザ $e: E \to A$ は次のような引き戻しと構成できる．
+	\begin{diagram}
+	 \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+	 |(E)| E & |(B)| B\\
+	   |(A)| A & |(BxB)| B \times B\\
+	   };
+	   \path[->]
+	   (E) edge node        {$h$} (B)
+	       edge node [swap] {$e$} (A)
+	   (A) edge node [swap] {$\braket{f, g}$} (BxB)
+	   (B) edge node {$\Delta = \braket{1_B, 1_B}$} (BxB);
+	\end{diagram}
+	一般化元を用いて言い換えれば，
+	\[
+	E = \Set{(a,b) | \braket{f, g}(a) = \Delta(b)}
+	\]
+	となる．ここで，$\braket{f, g}(a) = \braket{fa, ga}$ かつ $\Delta(b) = (b, b)$ である．よって，
+	\begin{align*}
+	 E &= \Set{\braket{a,b} | f(a) = b = g(a)}\\
+	   &= \Set{a | f(a) = g(a)}
+	\end{align*}
+	となり，これが示したかったことである．
+
+	\begin{diagram}
+	 \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+	 |(E)| E & |(A)| A & |(B)| B \\
+	 };
+	 \path[->]
+	 (E) edge node {$e$} (A)
+	 (A.20)  edge node {$f$} (B.160)
+	 (A.340) edge node [swap]{$g$} (B.200);
+	\end{diagram}
+	が実際にイコライザとなることは，簡単な図式追跡によって示せる．
+ \end{itemize}
+\end{proof}
+
+直積，終対象，引き戻し，そしてイコライザは全てこれから考察する一般的な{\bfseries 極限}({\itshape limit})の概念の特殊な場合である．まずは準備的な定義が必要である．
+
+\begin{definition}
+ ${\bf J}, {\bf C}$ を圏とする．${\bf C}$ の ${\bf J}$-{\bfseries 型の図式}とは，函手
+ \[
+  D: {\bf J} \to {\bf C}
+ \]
+ のことである．「添字圏」${\bf J}$ の対象を小文字で $i, j, \dots$ と表し，$D: {\bf J} \to {\bf C}$ の値を $D_i, D_j, \dots$ などとかく．
+
+ 図式 $D$ への{\bfseries 錐}({\itshape cone}) とは，${\bf C}$ の対象 $C$ と各対象 $j \in {\bf J}$ に関する ${\bf C}$ の射
+ \[
+  c_j: C \to D_j
+ \]
+ であり，${\bf J}$ の各射 $\alpha: i \to j$ について次の三角形を可換とする物のことである．
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1.25cm, column sep=1cm] {
+   |(C)|  C & |(Dj)| D_j\\
+   |(Di)| D_i\\
+  };
+
+  \path[->]
+    (C)  edge node {$c_j$} (Dj)
+         edge node [swap] {$c_i$} (Di)
+    (Di) edge node [swap] {$D_\alpha$} (Dj);
+ \end{diagram}
+
+ 錐の{\bfseries 射}
+ \[
+  \vartheta: (C, c_j) \to (C', c_j')
+ \]
+ とは，次の三角形を可換にする ${\bf C}$ の射である．
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1.25cm, column sep=1cm] {
+   |(C)|  C & |(C')| C'\\
+   & |(Dj)| D_j\\
+  };
+
+  \path[->]
+    (C)  edge node {$\vartheta$} (C')
+         edge node [swap] {$c_j$} (Dj)
+    (C') edge node {$c_j'$} (Dj);
+ \end{diagram}
+ つまり，全ての $j \in {\bf J}$ に対し，$c_j = c_j' \circ \vartheta$ が成立することである．以上から，$D$ への錐から成る自明な圏
+ \[
+  \Cone(D)
+ \]
+ を得る．
+\end{definition}
+
+図式 $D$ を「${\bf J}$ の ${\bf C}$ での描像」と考えている．そのような $D$ への錐とは，$D$ を底面とした複数の側面を持ったピラミッドであり，その間の射は，その頂点間の射である．（ここで読者は何か図を描いてみること！）
+
+\begin{definition}
+ 図式 $D: {\bf J} \to {\bf C}$ の{\bfseries 極限}({\itshape limit})とは，$\Cone(D)$ の終対象のことである．{\bfseries 有限極限}とは，有限の添字圏 ${\bf J}$ 上の図式に対する極限のことである．
+\end{definition}
+
+極限はしばしば
+\[
+ p_i: \llim_j D_j \to D_i
+\]
+の形で書かれる．定義を読み下すと，図式 $D$ の極限は次のような普遍写像性を持つ：
+任意の $D$ への錐 $(C, c_j)$ が与えられたとき，一意な射 $u: C \to \llim_j D_j$ が存在して，任意の $j$ について
+\[
+ p_j \circ u = c_j
+\]
+が成立する．したがって，極限を与える錐 $(\llim_j D_j, p_j)$ は図式に「最も近い」錐と考えることが出来，実際他の錐 $(C, c_j)$ は頂点の射 $u: C \to \llim_j D_j$ を合成するだけで極限錐から得ることが出来る．
+
+\begin{diagram}
+ \matrix[matrix of math nodes, column sep=1cm, row sep=1.5cm, ampersand replacement=\&] {
+  |(C)| C \& \& |(lim)| \displaystyle \llim_j D_j\\
+ \& |(Di)| D_i \& \& |(Dj)| D_j\\
+ };
+ \path[->, dotted] (C) edge node {$u$} (lim.165);
+ \path[->]
+   (C) edge node [swap]{$c_i$} (Di) edge (Dj)
+   (lim) edge (Di) edge node {$p_j$} (Dj)
+   (Di) edge node [swap] {$D_\alpha$} (Dj);
+\end{diagram}
+
+\begin{example}
+ ${\bf J} = \{1, 2\}$ を二つの対象を持ち，恒等射以外に射を持たない離散圏とする．図式 $D: {\bf J} \to {\bf C}$ は対象 $D_1, D_2 \in {\bf C}$ の組である．$D$ 上の錐は射の対
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1cm, ampersand replacement=\&] {
+  |(D1)| D_1 \& |(C)| C \& |(D2)| D_2\\
+  };
+  \path[->]
+  (C) edge node [swap] {$c_1$} (D1)
+  edge node        {$c_2$} (D2);
+ \end{diagram}
+ を持つ ${\bf C}$ の対象 $C$ である．そして，$D$ の極限はそうした錐の終対象，即ち ${\bf C}$ における $D_1$ と $D_2$ の{\bfseries 直積}
+ \begin{diagram}
+  \matrix[matrix of math nodes, column sep=1cm, row sep=1, ampersand replacement=\&] {
+  |(D1)| D_1 \& |(C)| D_1 \times D_2 \& |(D2)| D_2\\
+  };
+  \path[->]
+  (C) edge node [swap] {$p_1$} (D1)
+  edge node        {$p_2$} (D2);
+ \end{diagram}
+ である．よってこの場合
+ \[
+  \llim_j D_j \cong D_1 \times D_2
+ \]
+ が成立する．
+\end{example}
+
+\begin{example}
+ ${\bf J}$ を次の圏とする．
+ \begin{diagram}
+  \matrix[column sep=1cm, ampersand replacement=\&, matrix of math nodes]{
+  |(A)| \bullet \& |(B)| \bullet\\
+  };
+  \path[->]
+    (A.20)  edge node {$\alpha$} (B.160)
+    (A.340) edge node [swap] {$\beta$} (B.200);
+ \end{diagram}
+ ${\bf J}$ 型の図式は，
+ \begin{diagram}
+  \matrix[column sep=1cm, ampersand replacement=\&, matrix of math nodes]{
+  |(A)| D_1 \& |(B)| D_2\\
+  };
+  \path[->]
+    (A.20)  edge node {$D_\alpha$} (B.160)
+    (A.340) edge node [swap] {$D_\beta$} (B.200);
+ \end{diagram}
+ のようになり，錐は射の組
+ \begin{diagram}
+  \matrix[column sep=1cm, row sep=1cm, ampersand replacement=\&, matrix of math nodes]{
+  |(A)| D_1 \& |(B)| D_2\\
+  |(C)| C\\
+  };
+  \path[->]
+    (A.20)  edge node {$D_\alpha$} (B.160)
+    (A.340) edge node [swap] {$D_\beta$} (B.200)
+    (C)     edge node        {$c_1$} (A)
+            edge node [swap] {$c_2$} (B);
+ \end{diagram}
+ であり，$D_\alpha c_1 = c_2$ かつ $D_\beta c_1 = c_2$ を満たすもの，つまり $D_\alpha c_1 = D_\beta c_1$ となるものである．よって， $D$ に対応する極限は $D_\alpha, D_\beta$ の{\bfseries イコライザ}である．
+\end{example}
+
+\begin{example}
+ もし ${\bf J}$ が空圏なら，図式 $D:{\bf J} \to {\bf C}$ は唯一つだけ存在し，従ってその極限は ${\bf C}$ の{\bfseries 終対象}となる．
+ \[
+  \llim_{j \in \mathbf{0}} D_j \cong 1
+ \]
+\end{example}
+
+\begin{example}
+ ${\bf J}$ が有限圏
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1cm, column sep=1cm] {
+   & |(B)| \bullet \\
+  |(A)| \bullet & |(C)| \bullet \\
+  };
+  \path[->]
+    (B) edge (C)
+    (A) edge (C);
+ \end{diagram}
+ のとき，次の形の図式
+ \begin{diagram}
+  \matrix[matrix of math nodes, row sep=1cm, column sep=1cm] {
+   & |(B)| B \\
+  |(A)| A & |(C)| C \\
+  };
+  \path[->]
+    (B) edge node {$g$} (C)
+    (A) edge node [swap] {$f$} (C);
+ \end{diagram}
+ の極限は，単に $f$ と $g$ の引き戻しであることがわかる．
+ \[
+  \llim_j D_j \cong A \times_C B
+ \]
+\end{example}
+
+以上から，次の命題の半分は示せたことになる．
+\begin{prop}
+ 圏が任意の有限極限を持つ必要十分条件は，有限直積とイコライザを持つことである（前の命題より，それぞれ引き戻しと終対象を持つこと，と云っても同値である）．
+\end{prop}
+
+ここで，任意の有限図式 $D: {\bf J} \to {\bf C}$ が ${\bf C}$ において極限を持つとき，${\bf C}$ は{\bfseries 任意の有限極限を持つ}と云う．
+
+\begin{proof}
+ 任意の有限極限は有限直積とイコライザから構成出来ることを示す必要がある．
+ \[
+  D: {\bf J} \to {\bf C}
+ \]
+ を有限図式とする．最初の近似として，対象の集合 ${\bf J}_0$ 上の直積
+ \begin{equation}
+  \prod_{i \in {\bf J}_0} D_i\label{eq:D-product}
+ \end{equation}
+ を取ってみると，正しい方向の射 $p_j: \prod_{i \in {\bf J}_0} D_i \to D_j$ が得られる．しかし，これらは図式 $D$ の射 $D_\alpha: D_i \to D_j$ と常に可換となるとは限らない．そこで，直積とイコライザから引き戻しを構成した時と同様にして，全ての射（集合 ${\bf J}_1$）上の直積 $\prod_{(\alpha: i \to j) \in {\bf J}_1} D_j$ と二本の特別な射
+ \begin{diagram}
+  \matrix[column sep=1cm, ampersand replacement=\&, matrix of math nodes]{
+  |(A)| \prod_i D_i \& |(B)| \prod_{\alpha : i \to j}D_j\\
+  };
+  \path[->]
+    (A.10)  edge node {$\phi$} (B.172)
+    (A.350) edge node [swap] {$\psi$} (B.185);
+ \end{diagram}
+ を考えよう．ここで，$\phi, \psi$ は対象の直積の図式における射の作用を記録したものである．特に，$\phi$ と $\psi$ を，二番目の直積の射影 $\pi_\alpha$ との合成を
+ \begin{align*}
+  \pi_\alpha \circ \phi &= \phi_\alpha = \pi_{\cod(\alpha)}\\
+  \pi_\alpha \circ \psi &= \psi_\alpha = D_\alpha \circ \pi_{\dom(\alpha)}
+ \end{align*}
+ に取ることにより定める（ここで，$\pi_{\cod(\alpha)}, \pi_{\dom(\alpha)}$ は最初の直積からの射影である）．
+
+ 今，直積 \eqref{eq:D-product}の部分対象で図式 $D$ の射が可換となるようなものを得る為に，イコライザ
+ \begin{diagram}
+  \matrix[column sep=1cm, row sep=1cm, ampersand replacement=\&, matrix of math nodes]{
+  |(E)| E \& |(A)| \prod_i D_i \& |(B)| \prod_{\alpha : i \to j}D_j\\
+  };
+  \path[->]
+    (E) edge node {$e$} (A)
+    (A.10)  edge node {$\phi$} (B.172)
+    (A.350) edge node [swap] {$\psi$} (B.185);
+ \end{diagram}
+ を取る．$e_i = \pi_i \circ e$ とした時，$(E, e_i)$ が $D$ の極限となることを示す．そのために，射 $c: C \to \prod_i D_i$ を任意に取り， $c_i = \pi_i \circ c$ に対して $c = \braket{c_i}$ と表すことにする．射の族 $(c_i: C \to D_i)$ は $\phi c = \psi c$ となる時，その時に限り $D$ への錐となることに注目しよう．実際，
+ \[
+  \phi\braket{c_i} = \psi\braket{c_i}
+ \]
+ となる必要十分条件は，任意の $\alpha$ に対し，
+ \[
+  \pi_\alpha\phi\braket{c_i} = \pi_\alpha\psi\braket{c_i}
+ \]
+ となることである．しかし，
+ \[
+  \pi_\alpha \phi\braket{c_i} = \phi_\alpha\braket{c_i} = \pi_{\cod(\alpha)}\braket{c_i} = c_j
+ \]
+ であり，
+ \[
+  \pi_\alpha \psi\braket{c_i} = \psi_\alpha\braket{c_i} = D_\alpha \circ \pi_{\dom(\alpha)}\braket{c_i} = D_\alpha c_i
+ \]
+ であった．以上から， $\phi c = \psi$ となる必要十分条件は任意の $\alpha: i \to j$ に対し $c_j = D_\alpha \circ c_i$ となることであり，即ち，$(c_i: C \to D_i)$ が主張通り錐となることである．以上から，$(E, e_i)$ が錐であることと，任意の錐 $(c_i: C \to D_i)$ が $\phi\braket{c_i} = \psi\braket{c_i}$ となる射 $\braket{c_i}: C \to \prod_i D_i$ を与えることが従う．よって， $E$ による $\braket{c_i}$ の一意的な分解 $u: C \to E$ が存在し，これは明らかに錐の射となる．
+\end{proof}
+
+上の証明では，ある種類の直積の存在以外には有限性の条件を使っていないので，本質的に同じ証明により次の系が得られる．
+
+\begin{corollary}
+ 圏がある濃度の任意の極限を持つ必要十分条件は，その圏と同じ濃度の直積とイコライザを持つことである．ここで，${\bf C}$ が濃度 $\kappa$ の極限（直積）を持つとは，$\card({\bf J}_1) \leq \kappa$ なる任意の図式 $D: {\bf J} \to {\bf C}$ の極限（$\kappa$ 個の対象の任意の直積）を持つことである．
+\end{corollary}
+
+錐と極限の概念は，当然{\bfseries 余錐}({\itshape cocone})と{\bfseries 余極限}({\itshape colimit})の概念に双対化できる．よって，次の双対的な定理が得られる．
+
+\begin{theorem}
+ 圏 ${\bf C}$ が有限の余極限を持つ必要十分条件は，有限余積とコイコライザ（又は押し出しと始対象）を持つことである．${\bf C}$ が大きさ $\kappa$ の任意の余極限を持つ必要十分条件は，${\bf C}$ がコイコライザと大きさ $\kappa$ の余積を持つことである．
+\end{theorem}
+
+\section{極限の保存}
+\section{余極限}
+\section{演習問題}
+

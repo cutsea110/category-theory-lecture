@@ -1,0 +1,728 @@
+%#!platex -src-specials CategoryTheory.tex
+\chapter{群と圏}
+この章では，群と圏の間の多種多様な関係について見る．ここで扱われている基
+本的な群論の知識が既にあれば，今までに学んだ圏論的な構成の直感を得ること
+が出来るし，もしなければ圏論の応用として群論の基礎を学ぶことになる．ここ
+では．ここでは，群と圏の関係について，次の異なる三つの側面に焦点を当てる．
+
+\begin{enumerate}
+ \item 圏の中の群
+ \item 群の圏
+ \item 圏としての群
+\end{enumerate}
+
+\section{圏の中の群}
+既に見たように，群の概念は対象の自己同型の抽象化として得られる．特に具体
+的な場合には，群 $G$ を圏 ${\bf C}$ のある対象 $X$ について，ある種の射
+$g: X \to X$ の集まり
+\[
+ G \subseteq \Hom_{\bf C}(X, X)
+\]
+として構成することが出来る．一方，抽象的な群の概念を，圏の中である種の構
+造を持った対象として直接的に説明することも出来る．このより巧妙な
+\footnote{訳注：subtle のいい訳語が思い付かない……．}「圏における群」の
+概念もまた，とても有用なものであることが判明する．
+
+${\bf C}$ を有限直積を持つ群とする．${\bf C}$における群の概念は，本質的
+には $\Sets$ における通常の群の概念を一般化したものになっている．
+
+\begin{definition}
+ ${\bf C}$での{\bfseries 群}({\itshape group})とは，
+ \begin{diagram}
+   \matrix[matrix of math nodes, column sep=1cm, row sep=1cm] {
+     |(GxG)| G \times G &  |(GL)| G  & |(GR)| G \\
+                        &  |(1)|  1 \\
+   };
+   \path[->]
+     (GxG) edge node {$m$} (GL)
+     (GR)  edge node [swap] {$i$} (GL)
+     (1)   edge node {$u$} (GL);
+ \end{diagram}
+ の形の対象と射からなり，次の条件を満たすものである．
+
+ \begin{enumerate}\label{GroupDef}
+  \item $m$ は結合的である．つまり，次の図式が可換となる．
+	\begin{diagram}
+	  \matrix[matrix of math nodes, column sep=0.5cm, row sep=1cm] {
+	  |(GxGxGL)| (G \times G) \times G &  & |(GxGxGR)| G \times (G \times G)\\
+	  |(GxGL)|    G \times G           &  & |(GxGR)|   G \times G \\
+	  & |(G)| G \\
+	  };
+	  \path[->]
+	    (GxGxGL) edge node {$\cong$} (GxGxGR)
+	             edge node [swap]{$m \times 1$} (GxGL)
+	    (GxGxGR) edge node {$1 \times m$} (GxGR)
+	    (GxGL)   edge node [swap] {$m$} (G)
+	    (GxGR)   edge node {$m$} (G);
+	\end{diagram}
+	ここで，$\cong$ は直積の標準的な結合律同型である．
+  \item $u$ は $m$ に関する単位元である．つまり，次の図式の二つの三角形が
+	可換となる．
+	\begin{diagram}
+	  \matrix [matrix of math nodes, column sep=1cm, row sep=1.25cm] {
+	    |(GL)|   G           &  |(GxGR)| G \times G \\
+	    |(GxGL)| G \times G  &  |(GR)|   G\\
+	  };
+	  \path[->]
+	    (GL) edge node {$\langle u, 1_G \rangle$} (GxGR)
+	         edge node [swap] {$1_G$}             (GR)
+	         edge node [swap] {$\langle 1_G, u \rangle$} (GxGL)
+	    (GxGL) edge node [swap] {$m$} (GR)
+	    (GxGR) edge node {$m$} (GR);
+	\end{diagram}
+	ここで，「定数射」$u!: G \xrightarrow{!} 1 \xrightarrow{u} G$ を
+	$u$ と書いた．
+  \item $i$ は $m$ についての逆元を与える．即ち，次の図式の両側が可換と
+	なる．
+	\begin{center}
+	 \begin{tikzpicture}
+	  \matrix [matrix of math nodes, column sep=1cm, row sep=1.25cm] {
+	    |(GxGUL)| G \times G  &  |(GU)| G &  |(GxGUR)| G \times G \\
+	    |(GxGDL)| G \times G  &  |(GD)| G & |(GxGDR)| G \times G \\
+	  };
+	  \path[->]
+	    (GU) edge node [swap] {$\Delta$} (GxGUL)
+	         edge node        {$\Delta$} (GxGUR)
+	         edge node [swap] {$u$}      (GD)
+	    (GxGUL) edge node [swap] {$1_G \times i$} (GxGDL)
+	    (GxGUR) edge node {$i \times 1_G$} (GxGDR)
+	    (GxGDL) edge node [swap] {$m$} (GD)
+	    (GxGDR) edge node {$m$} (GD);
+	 \end{tikzpicture}
+	\end{center}
+	ただし，$\Delta = \langle 1_G, 1_G \rangle$である．
+ \end{enumerate}
+\end{definition}
+
+これらの図式が可換になるという条件は，任意の（一般化）元
+\[
+ x, y, z: Z \to G
+\]
+に対し，次の見慣れた条件が成立することと同値であることに注意しよう．
+
+\begin{align*}
+ m(m(x,y), z) & = m(x, m(y, z))\\
+    m(x, u) = & x = m(u, x)\\
+   m(x, ix) = & u = m (ix, x)
+\end{align*}
+
+\begin{definition}
+ ${\bf C}$ における群の{\bfseries 準同型} $h: G \to H$ とは，次の条件を
+ 満たす${\bf C}$の射
+ \[
+  h: G \to H
+ \]
+ のこと．
+
+ \begin{enumerate}
+  \item $h$ は $m$ を保つ：
+	\begin{center}
+	 \begin{tikzpicture}
+	  \matrix [matrix of math nodes, column sep=1cm, row sep=1.75cm] {
+	    |(GxG)|  G \times G  &  |(HxH)| H \times H \\
+	    |(G)|    G           &  |(H)|   H \\
+	  };
+	  \path[->]
+	    (GxG) edge node {$h \times h$} (HxH)
+	          edge node [swap] {$m$}   (G)
+	    (HxH) edge node {$m$}          (H)
+	    (G)   edge node [swap]{$h$}    (H);
+	 \end{tikzpicture}
+	\end{center}
+  \item $h$ は $u$ を保つ：
+	\begin{center}
+	 \begin{tikzpicture}
+	  \matrix [matrix of math nodes, column sep=1cm, row sep=1cm] {
+	    |(G)| G  &  |(H)| H \\
+	    |(1)| 1 \\
+	  };
+	  \path[->]
+	    (G) edge node {$h$} (H)
+	    (1) edge node {$u$} (G)
+	        edge node [swap] {$u$} (H);
+	 \end{tikzpicture}
+	\end{center}
+  \item $h$ は $i$ を保つ：
+	\begin{center}
+	 \begin{tikzpicture}
+	  \matrix [matrix of math nodes, column sep=1cm, row sep=1cm] {
+	    |(GU)| G  &  |(HU)| H \\
+	    |(GD)| G  &  |(HD)| H \\
+	  };
+	  \path[->]
+	    (GU) edge node {$h$} (HU)
+	         edge node [swap] {$i$} (GD)
+	    (HU) edge node {$i$} (HD)
+	    (GD) edge node [swap] {$h$} (HD);
+	 \end{tikzpicture}
+	\end{center}
+ \end{enumerate}
+ 自明な恒等射と合成により，${\bf C}$における群は圏を成し，
+ \[
+  \mathrm{Group}({\bf C})
+ \]
+ と書く．
+\end{definition}
+
+\begin{example}
+ 圏の内部群は，よく知られた追加的な構造を持つ群の概念を捉えたものとなっ
+ ている．
+
+ \begin{itemize}
+  \item 通常の意味での群は，$\Sets$ における群である．
+  \item 位相群は，位相空間の圏 ${\bf Top}$ における群である．
+  \item （部分）順序群は，poset の成す圏 $\Pos$ における群である（この時，
+	通常逆元演算 $i$ が順序を{\bfseries 反転する}ことを要求する．つ
+	まり，$i: {\bf C}^\op \to {\bf C}$ となることを要求する）．
+ \end{itemize}
+\end{example}
+
+例えば，実数全体 $\R$ は加法について位相群かつ順序群を成す．これは，加
+法演算 $x+y$ と加法逆元演算 $-$ が連続かつ順序を保つ（$-$ は順序を逆転
+する）写像となっているからである．$\R$ は乗法 $x \cdot y$ について，も
+位相 「半群」になるが，乗法逆元演算 $1/x$ は $0$ で連続でない（更には定
+義すらされていない！）．
+
+\begin{example}
+ 群のなす圏 ${\bf Groups}$における群 $G$ があったとする．つまり，$G$ は
+ 群準同型 $m: G \times G \to G$ など，定義 \ref{GroupDef} に挙げた準同型
+ を持つ群であるとする．これを，より初等的な言葉で分析してみよう．群 $G$
+ の積，つまり台集合 $|G|$ 上の積を $x \circ y$，準同型による積 $m$ を $x
+ \star y$ と書くことにしよう．$m$ が直積群 $G \times G$ から $G$ への準
+ 同型であることから，特に任意の $g, h \in G \times G$ に対し，
+ $m(g \circ h) = m(g) \circ m(h)$ がいえる．ここで
+ $g = (g_1, g_2), h = (h_1, h_2)$ であることと，$G \times G$ の積
+ $\circ$ は成分ごとの積であったことを思い出せば，上の関係式は次のように
+ 書ける．
+ \begin{equation}
+    (g_1 \circ h_1) \star (g_2 \circ h_2)
+     = (g_1 \star g_2) \circ (h_1 \star h_2)\label{Eckman-Hilton-condition}
+ \end{equation}
+ $\circ$ と $\star$ に関する単位元をそれぞれ $1^\circ$ と $1^\star$ と書
+ こう．次の命題は「Eckmann-Hilton 論法」と呼ばれる物で，ホモトピー論の分
+ 野で最初に用いられた．
+
+ \begin{prop}
+  集合 $G$ が二つの二項演算 $\circ, \star: G \times G \to G$ とその単位
+  元 $1^\circ, 1^\star$ を持ち $(\ref{Eckman-Hilton-condition})$ を満た
+  すとき，次が成立する．
+  \begin{enumerate}
+   \item $1^\circ = 1^\star$
+   \item $\circ = \star$
+   \item 演算 $\circ = \star$ は可換
+  \end{enumerate}
+ \end{prop}
+ \begin{proof}
+  はじめに，次が成立する．
+  \begin{align*}
+   1^\circ &= 1^\circ \circ 1^\circ \\
+           &= (1^\circ \star 1^\star) \circ (1^\star \star 1^\circ) \\
+           &= (1^\circ \circ 1^\star) \star (1^\star \circ 1^\circ) \\
+           &= 1^\star \star 1^\star \\
+           &= 1^\star
+  \end{align*}
+  よって，以下 $1^\circ = 1 = 1^\star$ と書く．次に，
+  \[
+   x \circ y = (x \star 1) \circ (1 \star y)
+             = (x \circ 1) \star (1 \circ y)
+             = x \star y
+  \]
+  がいえるので，$x \circ y = x \cdot y = x \star y$ と書ける．最後に，
+  \[
+   x \cdot y = (1 \cdot x) \cdot (y \cdot 1)
+             = (1 \cdot y) \cdot (x \cdot 1)
+             = y \cdot x
+  \]
+  となる．
+ \end{proof}
+\end{example}
+
+以上より，次を得る．
+\begin{corollary}
+ 群のなす圏における群対象は Abel 群と一致する．
+\end{corollary}
+\begin{proof}
+ ${\bf Groups}$ における群が Abel 群となることはちょうど今示したので，あ
+ とは任意の Abel 群が準同型による群演算を持つことを示せばよい．これは簡
+ 単な演習問題とする．
+\end{proof}
+
+\begin{remark}\label{EHarg-monoid}
+ この論法では，群の構造のすべてを使っている訳ではないことに注意しよう．
+ 実際，モノイドの圏におけるモノイドについても同じ結果が成立し，それらは
+ 可換モノイドと一致する．
+\end{remark}
+
+\begin{example}
+ 圏内部の代数的構造に関する更なる例は，（狭義）{\bfseries モノイド圏}に
+ よって与えられる．
+ \begin{definition}
+  {\bfseries 狭義モノイド圏}（{\itshape strict monoidal category}；厳密
+  モノイド圏，強モノイド圏，ストリクトモノイダル圏とも）
+  \footnote{訳注：訳語として何を充てるかはまだ決定ではないので，意見求む．
+  「ストリクトモノイダル圏」は『圏論の基礎』，「厳密モノイド圏」は檜山さ
+  ん，それ以外は Wikipedia から引っ張ってきました．あんまり「厳密」とい
+  う言葉を他の数学用語で見かけないような気がするので，悩ましいところです．
+  あと「モノイド圏」とするか「モノイダル圏」とするかもむずかしい．}とは，
+  函手的な二項演算 $\otimes: {\bf C} \times {\bf C} \to {\bf C}$ を持つ
+  次のような圏 ${\bf C}$ である．まず，$\otimes$ は結合的であり：
+  \begin{equation}
+   A \otimes (B \otimes C) = (A \otimes B) \otimes C\label{Mon:Assoc}
+  \end{equation}
+  また， $\otimes$ に関して単位元として振る舞う対象 $I$ を持つ：
+  \begin{equation}
+   I \otimes C = C = C \otimes I\label{Mon:Unit}
+  \end{equation}
+ \end{definition}
+\end{example}
+
+狭義モノイド圏は，${\bf Cat}$ におけるモノイド対象と完全に同じものである．
+基底圏が poset $P$ である例には，結び $x \vee y$ と終対象 $1$ によるもの
+と，交わり $x \wedge y$ と $0$ によるものが含まれる（$P$ がこうした構造
+を持つことを仮定している）．また，単調写像 $f: P \to P$ の集まり
+$\mathrm{End}(P)$ に各点ごとの順序を入れた poset は，$\otimes$ として合
+成 $g \circ f$ を，単位元として $1_P$ を取ればこれも狭義モノイド圏となる．
+離散モノイド圏，即ち基底圏が離散圏であるようなものは，明らかに単なる普
+通の（$\Sets$ における）モノイドである．一方，ただ一つの対象を持つ
+モノイド圏はモノイダルなモノイドとなり，先の注意 $\ref{EHarg-monoid}$ に
+より，可換モノイドと一致する．
+
+複数の射と対象を持つ真の圏を基底圏とするより一般のモノイド圏は余り見られ
+ない．そうした構造は少なくはないが，典型的には$(\ref{Mon:Assoc})$ と
+$(\ref{Mon:Unit})$で要求されている条件は，「同型を除いて」でしか成立しな
+い．そうしたものの例としては，直積 $A \times B$ や余積 $A + B$，ベクトル
+空間や環上の加群・多元環などのテンソル積が挙げられる（線型論理の証明がな
+す圏も更んある例を与える）．このより一般的な（狭義とは限らない）モノイド
+圏の概念には，「同型を除く」概念を精密化するのに必要な「自然同型」の概念
+を（第\ref{Chapter07}章で）学んだ後に再び立ち返る．
+
+poset ではない{\bfseries 狭義の}モノイド圏の基本的な例は，有限順序数 $0,
+1, 2, \cdots$ の圏 ${\bf Ord}_{\rm fin}$によって与えられる．有限順序数は，
+集合論によって，
+\begin{align*}
+ 0   &= \emptyset,\\
+ n+1 &= \Set{0, \cdots, n}
+\end{align*}
+と表現出来る．射は，単にこれらの間の任意の写像である．モノイド積
+$m \otimes n$ は $m + n$ であり，$0$ がその単位元となる．期待通りの方法
+で精密化出来るという意味で，この例は実際に「一つの対象上の自由モノイド圏」
+となっている．
+
+論理学の用語を使えば，圏の内部群の概念は，$\Sets$ に限らず有限直積を持つ
+任意の圏で「群論に対するモデルを与えることが出来る」と云うことに対応して
+いる．よって，例えば $\lambda$-計算の型の圏も有限直積を持つので，
+{\bfseries $\lambda$-計算における群}の概念を定義することが出来る．勿論，
+モノイドや環のような，二項演算と等式によって与えられる代数理論についても
+同様のことがいえる．否定や含意，量化子など他の論理演算を含むような理論は，
+直積以外の更に追加的な構造を持つ圏においてモデルを与えることが出来る．こ
+れが，{\bfseries 圏論的意味論}と呼ばれるもののおおまかな説明である．こう
+した意味論は，ある種の直観主義論理の理論のように，$\Sets$ によるモデル化
+だけでは不十分な理論に有用である．
+
+\section{群のなす圏}
+$G, H$ を（$\Sets$ における）群とし，
+\[
+ h: G \to H
+\]
+を群準同型とする．$h$ の{\bfseries 核}（{\itshape kernel}）は，イコライザ
+\begin{diagram}
+ \matrix [matrix of math nodes, column sep=1cm] {
+   |(kerh)|  \ker(h) = \Set{g \in G | h(g) = u}  & |(G)| G & |(H)| H\\
+ };
+ \path[->]
+   (kerh) edge (G)
+   (G.20) edge node {$h$} (H.160)
+   (G.-20) edge node [swap] {$u$} (H.200);
+\end{diagram}
+によって定義される．ここで $u$ によって，定数準同型
+\[
+ u! = G \xrightarrow{!} 1 \xrightarrow{u} H
+\]
+を表した．この構成によって，上の図式がイコライザとなることは既に見た．
+
+$\ker(h)$ が{\bfseries 部分群}であることに注目しよう．特に，$\ker(h)$は{\bfseries 正規部分群}（{\itshape normal subgroup}）である．
+つまり，任意の $k \in \ker(h)$ に対し，
+\[
+ g \cdot k \cdot g^{-1}\ \ \ \forall g\in G
+\]
+が成立する（ただし積記法を用いた）．さて，$N \overset{i}{\rightarrowtail} G$ を
+{\bfseries 任意の}正規部分群とするとき，$N$ に属する $g \in G$ だけを $u$ に移すような（「$N$ をつぶす」）コイコライザ
+\begin{diagram}
+ \node (N) {$N$};
+ \node (G) [right of=N] {$G$};
+ \node (G/N) [right of=G] {$\quot{G}{N}$};
+ \path[->]
+   (N.20)  edge node        {$i$}   (G.160)
+   (N.-20) edge node [swap] {$u$}   (G.200)
+   (G)     edge node        {$\pi$} (G/N);
+\end{diagram}
+を次のようにして構成することが出来る．まず，$\quot{G}{N}$ は「$N$ の coset」とする．つまり，$\quot{G}{N}$ は
+任意の $g \in G$ に対し，
+\[
+ g \sim h \iff g \cdot h^{-1} \in N
+\]
+に関する同値類 $[g]$ を元にもつものとする（$\sim$ が同値関係となることは演習問題！）．
+このとき，剰余群 $\quot{G}{N}$ の積は，
+\[
+ [x] \cdot [y] = [x \cdot y]
+\]
+で与えられる．これは，$N$ が正規部分群であることから次のようにして well-defined であることがわかる．
+今，$u, v$が任意に与えられており，$x \sim u, y \sim v$ であるとする．定義より
+\[
+ x \cdot y \sim u \cdot v \iff (x \cdot y) \cdot (u \cdot v)^{-1} \in N
+\]
+である．右辺を変形すると，
+\begin{align*}
+ (x \cdot y) \cdot (u \cdot v)^{-1} &= x \cdot y \cdot v^{-1} \cdot u^{-1}\\
+                                    &= x \cdot (u^{-1} \cdot u) \cdot y \cdot v^{-1} \cdot u^{-1}\\
+                                    &= (x \cdot u^{-1}) \cdot (u \cdot (y \cdot v^{-1}) \cdot u^{-1} )
+\end{align*}
+となり，最後の式は明らかに $N$ に属するので，$x \cdot y \sim u \cdot v$ が云える．
+
+それでは，先程の図式が実際にコイコライザとなることを示そう．まず， $n \cdot u = n$ から $[n] = [u]$ が成立するので，
+\[
+ \pi \circ i = \pi \circ u!
+\]
+が明らかに成立する．今，$N$ をつぶすような（任意の $n \in N$ に対し $f(n) = u$ となるような）準同型 $f$ が与えられていると仮定しよう．
+このとき，次のような「因数分解」 $\bar f$
+\begin{diagram}
+ \matrix [matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(G)|   G  &  |(H)| H \\
+   |(G/N)| \quot{G}{N}\\
+ };
+ \path[->]
+   (G)   edge node        {$f$}      (H)
+         edge node [swap] {$\pi$}    (G/N);
+ \path[->, dotted]
+   (G/N) edge node [swap] {$\bar f$} (H);
+\end{diagram}
+を，
+\[
+ \bar{f}[g] = f(g)
+\]
+により定めることが出来る．$x \sim y$ から $f(x) = f(y)$ が云えれば，この定義は well-defined となる．
+しかるに，$x \sim y$ から $f(x \cdot y^{-1}) = u$ が云えるので，
+\[
+ f(x) = f(x \cdot y^{-1} \cdot y) = f(x \cdot y^{-1}) \cdot f(y) = u \cdot f(y) = f(y)
+\]
+となるのでこれは well-defined となる．更に，$\pi$ はエピ射であるので，$\bar f$ は $\pi \bar{f} = f$ を満たす一意な射となる．
+こうして，次の古典的な{\bfseries 群の準同型定理}の大半は示されたことになる．
+
+\begin{theorem}
+ 任意の群の準同型 $h: G \to H$ は，核と呼ばれる正規部分群 $\ker(h) = h^{-1}(H)$ を持ち，次が成立する．
+
+ $N \subseteq G$ を任意の正規部分群とすると， $N \subseteq \ker(h)$ であるための必要十分条件は，
+ $\bar{h} \circ \pi = h$ を満たすような（必然的に一意な）準同型 $\bar{h}: \quot{G}{N} \to H$
+ が存在することである：
+ \begin{diagram}
+  \matrix [matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(G)|   G  &  |(H)| H \\
+   |(G/N)| \quot{G}{N}\\
+  };
+  \path[->]
+    (G)   edge node        {$h$}      (H)
+          edge node [swap] {$\pi$}    (G/N);
+ \path[->, dotted]
+    (G/N) edge node [swap] {$\bar h$} (H);
+ \end{diagram}
+\end{theorem}
+\begin{proof}
+ あとは条件を満たすような因数分解 $\bar h$ が存在すれば，$N \subseteq \ker(h)$ となることを示せばよい．
+ しかし，これは $\pi(N) = \{[u_G]\}$ であることから明らかである．よって，
+ $h(n) = \bar{h}\pi(n) = \bar{h}([n]) = u_H$
+\end{proof}
+
+最後に，上の定理で $N = \ker(h)$ とおき，$[x], [y] \in \quot{G}{\ker(h)}$ を任意に取れば，
+\begin{align*}
+ \bar{h}([x]) = \bar{h}([y]) &\Rightarrow h(x) = h(y)\\
+ &\Rightarrow h(xy^{-1}) = u \\
+ &\Rightarrow xy^{-1} \in \ker(h)\\
+ &\Rightarrow x \sim y \\
+ &\Rightarrow [x] = [y]
+\end{align*}
+となるので，$\bar h$ は単射となる．よって，次の結論を得る．
+
+\begin{corollary}
+ 任意の群準同型 $h: G \to H$ は，単射準同型が次にくる
+ \footnote{``quotient followed by injective homomorphism'' を簡潔かつ適切に訳せていない……．}
+ 商として次のように因数分解される．
+ \begin{diagram}
+  \matrix [matrix of math nodes, column sep=1cm, row sep=1cm] {
+   |(G)|   G  &  |(H)| H \\
+   |(G/N)| \quot{G}{\ker(h)}\\
+  };
+  \path[->]
+    (G)   edge node        {$h$}      (H);
+  \path[->>]
+    (G)   edge node [swap] {$\pi$}    (G/N);
+ \path[>->]
+    (G/N) edge node [swap] {$\bar h$} (H);
+ \end{diagram}
+
+ 従って，$\bar{h}: \quot{G}{\ker(h)} \xrightarrow{\sim} \im(h) \subseteq H$ は $h$ の像である部分群 $\im(h)$ の上への同型へとなる．
+
+ よって，特に $h$ は，その核が自明であるとき（$\ker(h) = \{u\}$ であるとき），その時に限って単射となる．
+\end{corollary}
+
+準同型 $h: G \to H$ の核に対する双対概念に，余核 $c: H \to C$ がある．これは， $c \circ h = u$ が成立するという意味で「$h$ をつぶす」普遍的な方法である．核がイコライザの特別な場合であるのと同じように，余核はコイコライザの特別な場合である．余核の詳細は演習問題に譲る．
+
+\section{圏としての群}
+群は圏であることを思い出そう．特に，群とは対象を唯一つ持ち，全ての射が同型射であるような圏である．
+群 $G, H$ を圏と見做したとき，それらの間の函手
+\[
+ F: G \to H
+\]
+を考えることが出来る．群の間の函手は，明らかに群準同型と同じものである．
+
+では，群 $G$ から，他の必ずしも群とは限らない圏 ${\bf C}$ への函手 $R: G \to {\bf C}$ とは何だろうか？
+もし ${\bf C}$ が（有限次元）ベクトル空間と線形変換からなる圏であれば，このような函手は群論の専門家が「線型表現」と呼んでいるものと恰度同じものである．$G$ の元は ${\bf C}$ で特定の対象上の自己同型となる．例えば，置換表現とは単に $\Sets$ への函手に過ぎない．
+
+さて，準同型の核や正規部分群による剰余群の概念を群から圏へと一般化し，群の準同型定理の圏論的な類似を与えよう．
+
+\begin{definition}
+ 圏 ${\bf C}$ 上の{\bfseries 合同関係}（{\itshape congruence}）とは，次を満たすような射の同値関係 $f \sim g$ のことである．
+
+ \begin{enumerate}
+  \item $f \sim g$ ならば $\dom(f) = \dom(g), \cod(f) = \cod(g)$ が成り立つ．
+	\begin{diagram}
+	 \node (l) {$\bullet$};
+	 \node (r) [right of=l] {$\bullet$};
+	 \path[->]
+	   (l.20)  edge node        {$f$} (r.160)
+	   (l.-20) edge node [swap] {$g$} (r.200);
+	\end{diagram}
+  \item $f \sim g$ ならば，任意の射 $a: A \to X, b: Y \to B$ に対し，$bfa \sim bga$ となる．
+	\begin{diagram}
+	 \matrix (m) [matrix of math nodes, column sep=1cm] {
+	   \bullet & \bullet & \bullet & \bullet \\
+	 };
+	 \path[->]
+	   (m-1-1)     edge node        {$a$} (m-1-2)
+	   (m-1-2.20)  edge node        {$f$} (m-1-3.160)
+	   (m-1-2.-20) edge node [swap] {$g$} (m-1-3.200)
+	   (m-1-3)     edge node        {$b$} (m-1-4);
+	\end{diagram}
+	ただし，$\dom(f) = X = \dom(g)$ かつ $\cod(f) = Y = \cod(g)$ である．
+ \end{enumerate}
+\end{definition}
+
+$\sim$ を圏 ${\bf C}$ 上の合同関係としたとき，{\bfseries 合同圏}（{\itshape congruence category}）${\bf C}^\sim$ を次のように定める．
+\begin{align*}
+ ({\bf C}^\sim)_0 &= {\bf C}_0\\
+ ({\bf C}^\sim)_1 &= \Set{\langle f, g \rangle | f \sim g}\\ 
+ \tilde{1}_C &= \langle 1_C, 1_C \rangle
+\end{align*}
+合同条件を用いれば，この合成が well-defined であることは用意に確かめられる．
+
+次の自明な二つの射影函手が存在する．
+\begin{diagram}
+ \node (l) {${\bf C}^\sim$};
+ \node (r) [right of=l] {${\bf C}$};
+ \path[->]
+   (l.15)  edge node        {$p_1$} (r.160)
+   (l.-15) edge node [swap] {$p_2$} (r.200);
+\end{diagram}
+そこで，{\bfseries 商圏}（{\itshape quotient category}）$\quot{\bf C}{\sim}$ を次のようにして構成しよう．
+\begin{align*}
+ (\quot{\bf C}{\sim})_0 &= {\bf C}_0\\
+ (\quot{\bf C}{\sim})_1 &= \quot{({\bf C}_1)}{\sim}
+\end{align*}
+射は，各 $f \in {\bf C}_1$ について $[f]$ の形であり，$1_{[C]} = [1_C]$ かつ $[g] \circ [f] = [g \circ f]$ と定める．合同条件を用いれば，これも well-defined となる．
+
+次の図式をコイコライザとするような商函手（quotient functor）$\pi: {\bf C} \to \quot{\bf C}{\sim}$ が明らかに存在する．
+\begin{diagram}
+ \matrix (m) [matrix of math nodes, column sep=1cm] {
+  {\bf C}^\sim & {\bf C} & \quot{\bf C}{\sim} \\
+ };
+ \path[->]
+  (m-1-1.15)  edge node        {$f$}   (m-1-2.160)
+  (m-1-1.-15) edge node [swap] {$g$}   (m-1-2.200)
+  (m-1-2)     edge node        {$\pi$} (m-1-3.175);
+\end{diagram}
+群の場合については既に十分に見た．
+
+この構成によって，ある函手に対するコイコライザを作る方法に演習問題で触れる．以下では，この構成を群の場合に類似的な「圏の準同型定理」の証明に使う方法を見よう．圏 ${\bf C}$ および ${\bf D}$ と函手
+\[
+ F: {\bf C} \to {\bf D}
+\]
+が与えられたとしよう．すると，次のようにして， $F$ から ${\bf C}$ 上の合同関係 $\sim_F$ を決定することが出来る．
+\[
+ f \sim_F g \iff \dom(f) = \dom(g), \cod(f) = \cod(g), F(f) = F(g)
+\]
+これが{\bfseries 実際に}合同関係となることは簡単に確認出来るだろう．
+
+さて，合同圏を
+\begin{diagram}
+ \node (l) {$\ker(F) = {\bf C}^{\sim_F}$};
+ \node (r) [right of=l] {${\bf C}$};
+ \path[->]
+   (l.5)  edge (r.160)
+   (l.-5) edge (r.200);
+\end{diagram}
+と書き，これを $F$ の{\bfseries 核圏}（{\itshape kernel category}）と呼ぶことにしよう．
+
+すると，商圏
+\[
+ \quot{\bf C}{\sim_F}
+\]
+は次の普遍写像性（UMP）を持つ．
+
+\begin{theorem}
+ 任意の函手 $F: {\bf C} \to {\bf D}$ は，${\bf C}$ 上の合同関係 $\sim_F$ により決定される核圏 $\ker(F)$ を持ち，次の性質を満たす．任意の ${\bf C}$ 上の合同関係 $\sim_F$ が与えられた時，$f \sim g \Rightarrow f \sim_F g$ であることと，次に示すような因数分解 $\tilde{F}: \quot{\bf C}{\sim} \to {\bf D}$ が存在することは同値．
+
+ \begin{diagram}
+  \node (C)               {${\bf C}$};
+  \node (Cq) [below of=C] {$\quot{\bf C}{\sim}$};
+  \node (D)  [right of=C] {${\bf D}$};
+  \path[->]
+    (C) edge node        {$F$}   (D)
+        edge node [swap] {$\pi$} (Cq);
+  \path[->, dotted] (Cq) edge node [swap] {$\tilde{F}_1$} (D);
+ \end{diagram}
+\end{theorem}
+
+群の場合とちょうど同様に，上の定理で ${\bf C}^\sim = \ker(F)$ と置くことで因数分解定理が得られる．
+
+\begin{corollary}
+ どんな函手 $F: {\bf C} \to {\bf D}$ も，$F = \tilde{F} \circ \pi$ の形に因数分解される．
+ \begin{diagram}
+  \node (C)               {${\bf C}$};
+  \node (Cq) [below of=C] {${\bf C}/\ker(F)$};
+  \node (D)  [right of=C] {${\bf D}$};
+  \path[->]
+    (C) edge node        {$F$}   (D)
+        edge node [swap] {$\pi$} (Cq);
+  \path[->, dotted] (Cq) edge node [swap] {$\tilde{F}_1$} (D);
+ \end{diagram}
+ ここで，$\pi$ は対象に関して全単射かつ hom 集合について全射であり，$\tilde{F}$ は hom 集合について単射（即ち「忠実」）である：
+ \[
+  \tilde{F}_{A, B}: \Hom(A, B) \mono \Hom(FA, FB)
+  \ \ \ \ (\forall A, B \in {\bf C}/\ker(F))
+ \]
+\end{corollary}
+
+\section{有限表示圏}
+最後に，生成元と関係式によって表示される圏について考察しよう．
+
+有限グラフ $G$ 上の自由圏 ${\bf C}(G)$ から初めて，
+\[
+ (g_1 \circ \ldots \circ g_n) = (g'_1 \circ \ldots \circ g'_m)
+\]
+の形の関係式の有限集合 $\Sigma$ について考えよう（ただし，$g_i \in G$ であり，$\dom(g_n) = \dom(g'_m)$ かつ $\cod(g_1) = \cod(g'_1)$ とする）．
+つまり，$\Sigma$ は ${\bf C}(G)$ で同じ「端点」と「方向」をもつ二つの「辺」を同一視するような関係式の有限集合である．次に，$\Sigma$ に含まれるすべての関係式 $g = g'$ について $g \sim g'$ を見たすような最小の合同関係 $\sim$ を $\sim_\Sigma$ とする．これは，合同関係の族の共通部分が再び合同関係となることから確かに存在する．この合同関係による剰余ことで，{\bfseries 有限表示圏}（{\itshape finitely presented category}）の概念を得る．
+\[
+ {\bf C}(G, \Sigma) = \quot{{\bf C}(G)}{\sim_\Sigma}
+\]
+これは群の有限表示の完全なる類似であり，頂点を唯一つだけ持つグラフの場合が群の有限表示である．すると，${\bf C}(G, \Sigma)$ の普遍写像性は，既にみた群の場合の明らかな類似になっている．
+
+特に，${\bf C}(G, \Sigma)$ には「$G$型の図式」が含まれている．
+つまり，任意の $g = g' \in \Sigma$ について $i(g) = i(g')$ が成立するようなグラフ準同型 $i: G \to |{\bf C}(G, \Sigma)|$ が存在する．
+更に，$G$ 型の図式を持つ任意の圏 ${\bf D}$ が与えられた時（つまりグラフ準同型 $h: G \to |{\bf D}|$ が与えられ，各 $g = g' \in \Sigma$ について $h(g) = h(g')$ が成立する時），$|\bar{h}| \circ i = h$ を見たすような函手 $\bar{h}: {\bf C}(G, \Sigma) \to {\bf D}$ が一意に存在する．
+\begin{diagram}
+ \matrix (m) [matrix of math nodes, column sep=1cm, row sep=1.5cm]{
+  |(G)| G & |(CG)|  {\bf C}(G)\\
+          & |(CGS)| {\bf C}(G, \Sigma)\\
+ };
+ \path[->] (G) edge (CG) edge (CGS);
+ \path[->>] (CG) edge (CGS);
+\end{diagram}
+
+群の表示とちょうど同じように，${\bf C}(G, \Sigma)$ の構成法も二つの函手のコイコライザとして説明出来る．実際，射 $f, f' \in {\bf C}$ があって，$\sim$ を $f \sim f'$ を満たす ${\bf C}$ 上の最小の合同関係とする．この時図式
+\begin{diagram}
+ \matrix (m) [matrix of math nodes, column sep=1cm] {
+  {\bf C}({\bf 2}) & {\bf C} & \quot{\bf C}{\sim} \\
+ };
+ \path[->]
+  (m-1-1.15)  edge node        {$f$}   (m-1-2.160)
+  (m-1-1.-10) edge node [swap] {$f'$}  (m-1-2.201)
+  (m-1-2)     edge node        {$q$}   (m-1-3.179);
+\end{diagram}
+について考えよう．但し，${\bf 2}$ は二つと頂点とその間に唯一つの辺を持つグラフであり，$f, f'$ はグラフの生成辺をそれぞれ同名の射へと移す一意な函手，$q$ は商圏への標準的な函手とする．すると，$q$ は $f$ および $f'$ のコイコライザとなる．これを示すために，
+\[
+ df = df'
+\]
+を満たす任意の函手 $d: {\bf C} \to {\bf D}$ を取ろう．${\bf C}({\bf 2})$ がグラフ $\bullet \xrightarrow{x} \bullet$ 上の自由圏であることから，
+\[
+ d(f) = d(f(x)) = d(f'(x)) = d(f')
+\]
+が成立する．従って，$\langle f, f' \rangle \in \ker(d)$ となるので， $\sim \subseteq \ker(d)$ となる（$\sim$ が $f \sim f'$ を満たす最小の合同関係であることから従う）．よって，準同型定理により $d = \bar{d} \circ q$ を見たす函手 $\bar{d}: \quot{\bf C}{\sim} \to {\bf D}$ が存在する．
+
+関係式が二つ以上ある場合には，有限表示代数の場合（例$\ref{FinPresAlg}$）と同様に ${\bf 2}$ を $n \times {\bf 2}$ で置き換え，自由圏 ${\bf C}({\bf 2})$ を
+\[
+ {\bf C}(n \times {\bf 2}) = n \times {\bf C}({\bf 2}) = {\bf C}({\bf 2}) + \ldots + {\bf C}({\bf 2})
+\]
+で置き換えればよい．
+
+\begin{example}
+ 一意的に同型な二つの対象を持つ圏は，有限圏であるがループ（循環）を持たないことから，いかなるグラフ上でも自由とは{\bfseries ならない}．しかし，グラフ
+\begin{diagram}
+ \node (l) {$A$};
+ \node (r) [right of=l] {$B$};
+ \path[->]
+   (l.20)  edge node {$f$} (r.160)
+   (r.200) edge node {$g$} (l.-20);
+\end{diagram}
+ と関係式
+ \[
+  gf = 1_A \ \ \  fg = 1_B
+ \]
+ によって有限表示{\bfseries できる}．
+
+ 同様に，恒等ではない射 $f: \bullet \to \bullet$ を唯一つだけ持ち，
+ \[
+  f \circ f = 1 \ \ \text{または} \ \ f \circ f = f
+ \]
+ のいずれかを満たすような有限表示圏が存在する．最初の場合からは，群 $\Z/2\Z$ が得られる．二つ目の例は「冪等」である（しかし群にはならない）．事実，任意の巡回群
+ \[
+  \Z_n \cong \Z / \Z n
+ \]
+ は，このようなグラフ $f: \star \to \star$ と関係式 $f^n = 1$ によって表現することが出来る．
+
+ 勿論，複数の対象を持つおゆな有限表示圏も存在する．こうした圏は，頂点が対象を与え，辺が射を生成するような有限グラフと，辺による道に関する有限個の等式によって得られる．
+\end{example}
+\section{演習問題}
+\begin{enumerate}
+ \item 群$G$ を，唯一つの対象を持ち，全ての射が同型射であるような圏と見做し，$G$ 上の圏論的な合同関係 $\sim$ が，正規部分群 $N \subseteq G$（によって決定される $G$ 上の同値関係）と全く同じものであることを示せ．つまり，両者は同型対応することを示せ．
+
+       更に，商圏 $\quot{G}{\sim}$ と剰余群 $G/N$ が一致することも示せ．群の準同型定理は，圏のものの特別な場合であることを導け．
+ \item 集合 $I$ 上のスライス圏 $\Sets/I$ における群対象について考察せよ．そのような群 $G$ は，各 $i \in I$ について $G_i = G^{-1}(i)$ とすることで $I$ を添字にもつ（通常の）群の族 $G_i$ を定めることを示せ．これによって，それぞれ $I$ で添字付けられた群と準同型の族からなる圏への函手 $\Groups(\Sets/I) \to \Groups^I$ が定まることを示せ．
+ \item 任意の Abel 群は準同型による群演算を持つことを示して，群のなす圏における群対象が Abel 群と一致することの証明を完成させよ．
+ \item Eckmann-Hilton 論法を用いて，群の成す圏におけるモノイドは内部群となることを示せ．
+ \item Abel 群の準同型 $f: A \to B$ が与えられたとき，余核 $c: B \to C$ を $B$ の部分群 $\im(f) \subseteq B$ による剰余として定義する．
+
+       \begin{enumerate}
+	\item 余核が次の普遍写像性を持つことを示せ．$c \circ f = 0$ であり，もし準同型 $g: B \to G$ が $g \circ f = 0$ を満たすなら，$g$ は $c$ によって $g = u \circ c$ と一意に分解される．
+	\item 余核が特別な種類のコイコライザであることを示し，余核を用いて任意のコイコライザを構成せよ．
+	\item 余核の核をとり，$f: A \to B$ がそれによって分解されることを示せ．更に，その核は $f: A \to B$ の像（と同型）であることを示せ．このことより，余核によって決定される $f: A \to B$ の分解は，核をとることによって決定される分解と一致することを示せ．
+       \end{enumerate}
+ \item 次に示すような圏 ${\bf 3}$ について，異なる四つの有限表示を与えよ．
+       \begin{diagram}
+	\node (1) {$1$};
+	\node (2) [right of=1]{$2$};
+	\node (3) [below of=2]{$3$};
+	\path[->]
+	 (1) edge (2) edge (3) (2) edge (3);
+       \end{diagram}
+       ${\bf 3}$ は自由圏か？
+ \item ${\bf C}$ 上の合同関係 $\sim$ と，次に示すような ${\bf C}$ の射が与えられているとする．
+       \begin{diagram}
+	\node (A) {$A$};
+	\node (B) [right of=A]{$B$};
+	\node (C) [right of=B]{$C$};
+	\path[->]
+	  (A.20)  edge node        {$f$}  (B.160)
+	  (A.-20) edge node [swap] {$f'$} (B.200)
+	  (B.20)  edge node        {$g$}  (C.160)
+	  (B.-20) edge node [swap] {$g'$} (C.200);
+       \end{diagram}
+       このとき，$f \sim f'$ かつ $g \sim g'$ ならば $g \circ f \sim g' \circ f'$ となる事を示せ．
+ \item 任意の $C \in {\bf C}$ について $FC = GC$ となるような函手 $F, G: {\bf C} \to {\bf D}$ が与えられているとし，${\bf D}$ 上の合同関係を次の条件によって定める．
+       \[
+	\begin{array}{lcl}
+	 f \sim g & \text{iff} & \dom(f) = \dom(g) \,\&\, \cod(f) = \cod(g)\\
+	          &            & \& \,\forall {\bf E}\, \forall H: {\bf D} \to {\bf E} : HF = HG \Rightarrow H(f) = H(g)
+       \end{array}
+       \]
+       これが実際に合同関係となることを示せ．更に，$\quot{\bf D}{\sim}$ が $F$ と $G$ のコイコライザとなっていることを示せ．
+ \item ${\bf Ord}_\mathrm{fin}$ が，実際に一つの対象上の自由モノイド圏になっていることを確かめよ．
+\end{enumerate}

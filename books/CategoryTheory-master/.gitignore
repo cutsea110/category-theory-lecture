@@ -1,0 +1,11 @@
+.DS_Store
+*.toc
+.omakedb*
+*.aux
+*.omc
+*.dvi
+*.fls
+*.idx
+*.ind
+*.log
+*.ilg

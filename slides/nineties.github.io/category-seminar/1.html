@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="ja">
+
+	<head>
+		<meta charset="utf-8">
+
+    <title>圏論勉強会 第1回 @ ワークスアプリケーションズ</title>
+
+		<meta name="description" content="Seminar of category theory">
+    <meta name="author" content="Koichi Nakamura">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+    <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+
+		<!-- For syntax highlighting -->
+    <link rel="stylesheet" href="plugin/highlight/styles/github.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+    </script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+        }
+      });
+    </script>
+
+    <style type="text/css">
+      <!--
+      div.definition {
+        padding-left: 10px;
+        padding-right: 10px;
+        border: 4px solid #333333;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      }
+      --> 
+    </style>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+        <section>
+        <h1>圏論勉強会<br>第1回</h1>
+        <h3>@ワークスアプリケーションズ</h3>
+        <small> 中村晃一 <br> 2013年5月16日</small>
+        </section>
+
+        <section>
+        <h3>謝辞</h3>
+        <p>
+        この会の企画・会場設備の提供をして頂きました<br>
+        &#12849; ワークスアプリケーションズ様<br>
+        にこの場をお借りして御礼申し上げます。
+        </p>
+        </section>
+
+        <section>
+        <h3> 自己紹介 </h3>
+        <ul>
+          <li> 中村晃一</li>
+          <li> 東京大学 大学院 情報理工学系研究科<br>
+               コンピュータ科学専攻 後期博士課程 2年</li>
+          <li> プログラム最適化・言語処理系の実装技術・人間と言語の関係等に興味があります。</li>
+          <li> twitter: <a href="http://twitter.com/9_ties">@9_ties</a></li>
+        </ul>
+        </section>
+
+        <section>
+        <h2> はじめに </h2>
+        </section>
+
+        <section>
+        <h3> この会について </h3>
+        <ul>
+          <li> <span style="color:red">圏論(category theory)</span>を題材にいろんなことを学びます。</li>
+          <li> 分かり易さを重視して初歩的な例を多用します。</li>
+          <li> 関数型言語の経験がある方がより楽しめると思います。資料中では主にHaskellを使います。 </li>
+          <li> この資料は<a href="http://nineties.github.com/category-seminar/">http://nineties.github.com/category-seminar</a>に置いてあります。</li>
+        </ul>
+        </section>
+
+        <section>
+        <h3> 参考書 </h3>
+        <ul>
+          <li> 私はSteve Awodey著「Category Theory」で学びました。</li>
+          <li> 数学を専攻していない人でも読めるように書かれています。</li>
+          <li> pdf: <a href="http://www.andrew.cmu.edu/course/80-413-713/notes/">
+          http://www.andrew.cmu.edu/course/80-413-713/notes/
+          </a> </li>
+        </ul>
+        <div align="center"><img height="50%" src="http://images-jp.amazon.com/images/P/0199237182" alt="Category Theory"></div>
+        </section>
+
+        <section>
+        <h3> 参考書 </h3>
+        <ul>
+          <li> 資料中の日本語表現はS.マックレーン著 三好博之/高木理訳「圏論の基礎」に倣います。 </li>
+          <li> 数学専攻者向けです。 </li>
+        </ul>
+        <div align="center"><img height="50%" src="http://images-jp.amazon.com/images/P/4621063243" alt="圏論の基礎"></div>
+        </section>
+
+        <section>
+        <h2> 第１回:圏論って何? </h2>
+        </section>
+
+        <section>
+        <h3> 第1回の内容</h3>
+        <p>
+        初回は「圏論とはどのような学問なのか？」がなんとなく解るように,一部の重要な題材をピックアップしてざっと紹介します。
+        </p>
+        </section>
+
+        <section>
+        <h3> 具体例から始めよう </h3>
+        </section>
+
+        <section>
+        <h3> 「対」とは何か? </h3>
+        <p>
+        データ型$A$,$B$があるとします。この時，$A$と$B$の<span style="color:red">対(pair)</span>を表すデータ型Pとはどのようなものでしょうか？
+        </p>
+        <pre><code data-trim class="no-highlight" style="font-size:120%" contenteditable>
+Haskellだと
+
+type P = (A, B)
+
+とか
+
+data P = Pair A B
+
+など。
+
+
+
+
+
+
+
+C言語なら
+
+struct P {
+  A first;
+  B second;
+};
+
+など。
+
+
+
+
+
+
+
+フィールドの名前や順番はどうでも良いので
+
+struct P {
+  B bar;
+  A foo;
+};
+
+とかでも良い。
+
+
+
+
+
+
+
+例えばA,Bがdouble型なら,複素数型
+
+double _Complex
+
+も対と見なせる。
+
+
+
+
+
+
+
+例えばA,Bが16bit自然数ならばビット演算を使って
+
+(a << 16) | b
+
+も対と見なせる。
+
+
+
+
+
+
+
+このように対の具体例は"いくらでもある"のだけど結局対とは何？
+
+
+
+
+
+
+
+        </code></pre>
+        </section>
+
+        <section>
+        <h3> 定義が必要! </h3>
+        <p>
+        抽象的な概念の具体例を挙げる事はいくらでも可能ですが,例示による曖昧な理解のままでは先に進めません。
+        <span style="color:red">定義</span>を定める事が必要です。
+        </p>
+        </section>
+
+        <section>
+        <h3> 定義の抽象性が重要 </h3>
+        <p> より抽象的な定義はより多くの具体例を包括します。 </p>
+        <p> データの構造に依らない「対」の定義を考えましょう。 </p>
+        </section>
+
+        <section>
+        <p>
+        まず$P$はそれから$A$,$B$型のデータを得る特定の関数を備えているはずです。
+        これらを$\mathrm{first}$と$\mathrm{second}$と呼ぶことにします。
+        </p>
+        <div class="fragment">
+        <p>
+        この事は,以下のような<span style="color:red">図式(diagram)</span>で表現できます。
+        </p>
+
+        <div align="center"> <img src="fig/product1.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <p> A,B型への関数を持つデータ型は無数に存在しますので,これだけでは定義になりません。</p>
+        <div align="center"> <img src="fig/product2.png"> </div>
+        </section>
+
+        <section>
+        <p>
+        ある型からA,B型への関数も無数に存在し得ますので$\mathrm{first}$,$\mathrm{second}$の特徴付けが必要です。
+        </p>
+        <div align="center"> <img src="fig/product3.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        そこで，任意の型$X$と任意の関数$f: X\rightarrow A$，$g: X\rightarrow B$に対して以下の図式を考えます。
+        </div>
+        <div align="center"> <img src="fig/product4.png"></div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $X$から$A$,$B$の値を作れるなら，それらの値を対にする関数$u$が存在するはずです。
+        </div>
+        <div align="center"> <img src="fig/product5.png"></div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        このとき，$u$で対にして$\mathrm{first}$で取り出す事は，$f$と等しく
+        </div>
+        <div align="center"> <img src="fig/product6.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $\mathrm{second}$で取り出す事は，$g$と等しくなければいけません。
+        </div>
+        <div align="center"> <img src="fig/product7.png"> </div>
+        </section>
+
+        <section>
+        <p>
+        この事は関数合成の記号$\circ$を用いると
+        </p>
+        <div align="center"> $\mathrm{first} \circ u = f \qquad \mathrm{second} \circ u = g$ </div>
+        <p>
+        と表す事ができます。
+        </p>
+
+        <div class="fragment">
+        <p>
+        または「以下の図式が<span style="color:red">可換(commutative)</span>である」と言います。
+        </p>
+        <div align="center"> <img src="fig/product5.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> $u$の唯一性 </h3>
+        <p>
+        $P$が対でなくても図式は可換になり得ます。例えば$u$が余分なデータを付け足し$\mathrm{first}$,$\mathrm{second}$がそれを捨てる場合などです。
+        </p>
+        <p class="fragment">
+        余分なデータがあれば,その生成方法がいくつかあるので$u$は唯一に定まりません。
+        従って,$f$,$g$に対して<span style="color:red">$u$が唯一である</span>事を要請する必要がありそうです。
+        </p>
+        </section>
+
+        <section>
+        <h3> 「対」の定義 </h3>
+        <div class="definition">
+        <p style="font-size:90%">
+        型$A$,$B$の対とは<span style="color:transparent">型$P$,関数$\mathrm{first}: P\rightarrow A$，$\mathrm{second}: P\rightarrow B$からなり,
+        任意の型$X$と任意の関数$f: X\rightarrow A$, $g: X\rightarrow B$に対して，以下の図式が可換となるような
+        $u: X\rightarrow P$が唯一つ存在するものである。</span>
+        </p>
+        <div align="center"> <img height="45%" src="fig/product5-2.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 「対」の定義 </h3>
+        <div class="definition">
+        <p style="font-size:90%">
+        型$A$,$B$の対とは型$P$,関数$\mathrm{first}: P\rightarrow A$，$\mathrm{second}: P\rightarrow B$からなり,
+        <span style="color:transparent">任意の型$X$と任意の関数$f: X\rightarrow A$, $g: X\rightarrow B$に対して，以下の図式が可換となるような
+        $u: X\rightarrow P$が唯一つ存在するものである。</span>
+        </p>
+        <div align="center"> <img height="45%" src="fig/product5-3.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 「対」の定義 </h3>
+        <div class="definition">
+        <p style="font-size:90%">
+        型$A$,$B$の対とは型$P$,関数$\mathrm{first}: P\rightarrow A$，$\mathrm{second}: P\rightarrow B$からなり,
+        任意の型$X$と任意の関数$f: X\rightarrow A$, $g: X\rightarrow B$に対して，<span style="color:transparent">以下の図式が可換となるような
+        $u: X\rightarrow P$が唯一つ存在するものである。</span>
+        </p>
+        <div align="center"> <img height="45%" src="fig/product5-4.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 「対」の定義 </h3>
+        <div class="definition">
+        <p style="font-size:90%">
+        型$A$,$B$の対とは型$P$,関数$\mathrm{first}: P\rightarrow A$，$\mathrm{second}: P\rightarrow B$からなり,
+        任意の型$X$と任意の関数$f: X\rightarrow A$, $g: X\rightarrow B$に対して，以下の図式が可換となるような
+        $u: X\rightarrow P$が唯一つ存在するものである。
+        </p>
+        <div align="center"> <img height="45%" src="fig/product5.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 普遍性による定義 </h3>
+        <p style="font-size:90%">
+        ここでは,全ての$(f,g)$が$P$を経由して$u$と$(\mathrm{first},\mathrm{second})$に<span style="color:red">一意的に分解</span>される事を要請しています。
+        この性質を$P$,$\mathrm{first}$,$\mathrm{second}$の<span style="color:red">普遍性</span>と言います。<br>
+        後で説明しますがこのように定義すると$P$が(同型という対応を除いて)一意的に定義されます。
+        </p>
+        <div align="center"> <img height="45%" src="fig/product5.png"> </div>
+        </section>
+
+        <section>
+        <h3> 抽象化の力 </h3>
+        </section>
+
+        <section>
+        <p>
+        今の例において
+        </p>
+
+        <ul>
+          <li> $P$,$A$,$B$,$X$が型であるという事 </li>
+          <li> $\mathrm{first}$, $\mathrm{second}$, $u$, $f$, $g$が関数であるという事 </li>
+          <li> $\circ$が関数合成であるという事 </li>
+        </ul>
+
+        <p>
+        は本質的ではありません。
+        </p>
+        <p class="fragment">
+        使われている語彙は何らかの「もの」と「矢印」と「矢印の連結」です。
+        </p>
+        </section>
+
+        <section>
+        <h3> 「対」のアナロジー </h3>
+        <p> アナロジー的に </p>
+        <ul>
+          <li> 「もの」をある集合$X$の部分集合 </li>
+          <li> 「矢印」を集合の包含関係 </li>
+          <li> 「矢印の連結」を包含関係の合成
+          $$A \subseteq B, B\subseteq C\,\text{ならば}\,A \subseteq C$$
+          </li>
+        </ul>
+        <p>
+        とすると「対」の概念は何に対応するか考えてみます。
+        </p>
+
+        <p class="fragment">
+        例として$X=\{1,2,3\}$の時を考えます。
+        </p>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        下図では別の矢印をつなげて作れる矢印は省略してます。
+        </div>
+        <div align="center"> <img height="80%" src="fig/product9.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $\{1,2\}$と$\{1,3\}$の「対」を考えてみましょう。これらへ向かう矢印を持つ集合は
+        </div>
+        <div align="center"> <img height="80%" src="fig/product10.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $\{1,2\}$と$\{1,3\}$に向かう矢印を持つ集合は$\{1\}$と
+        </div>
+        <div align="center"> <img height="80%" src="fig/product11.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $\{1,2\}$と$\{1,3\}$に向かう矢印を持つ集合は$\{1\}$と$\emptyset$です。
+        </div>
+        <div align="center"> <img height="80%" src="fig/product12.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $\emptyset$,$\{1\}$それぞれからの矢印は,$\{1\}$を介して一意的に分解する事が出来ます。
+        </div>
+        <div align="center"> <img height="80%" src="fig/product13.png"> </div>
+        </section>
+
+        <section>
+        <p>
+        つまり$\{1, 2\}$と$\{1, 3\}$の「対」に相当するものは$\{1\}$です。
+        </p>
+        <p class="fragment">
+        実は,「集合と包含関係」の場合の「対」に対応する概念は「<span style="color:red">$A$,$B$の共通部分</span>」となります。
+        </p>
+        </section>
+
+        <section>
+        <h3> 「対」のアナロジー(その2) </h3>
+        <p>
+        今度は
+        </p>
+        <ul>
+          <li> 「もの」を整数 </li>
+          <li> 「矢印」を「$\leqq$」 </li>
+          <li> 「矢印の連結」を「$\leqq$」の合成
+          $$ a \leqq b, b \leqq c\,\text{ならば}\,a\leqq c$$
+          </li>
+        </ul>
+        <p>
+        に置き換えてみます。
+        </p>
+
+        <p class="fragment">
+        具体例として$4$と$6$の「対」を考えます。
+        </p>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        ここでも別の矢印をつなげて作れる矢印は省略してます。
+        </div>
+        <div align="center"> <img src="fig/product14.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:3em">
+        $4$,$6$への矢印を備えるのは$\cdots,-1,0,1,2,3,4$です。<br>
+        このうち「対」と同じ普遍性の条件を満たすのは$4$です。
+        </div>
+        <div align="center"> <img src="fig/product15.png"> </div>
+        </section>
+
+        <section>
+        <p>
+        つまり$4$と$6$の「対」に相当するものは$4$です。
+        </p>
+        <p class="fragment">
+        実は,「整数と順序」の場合の「対」に対応する概念は「<span style="color:red">$\min\{A,B\}$</span>」となります。
+        </p>
+        </section>
+
+        <section>
+        <h3> 素朴な定義では共通性が見えないが </h3>
+        <p style="height:5em; border:3px solid #C0C0C0; padding:1em">
+        $A$,$B$の共通部分とは$A$,$B$の両方に含まれる要素全てからなる集合である。
+        </p>
+        <p style="height:5em; border:3px solid #C0C0C0; padding:1em">
+            $\min\{A,B\}$とは$A$,$B$のうち小さい方である。
+        </p>
+        </section>
+
+        <section>
+        <h3> 言葉を変えると共通性が見える </h3>
+        <p style="height:5em; border:3px solid #C0C0C0; padding:1em">
+        集合$A$,$B$の共通部分$P$とは$P\subseteq A$,$P\subseteq B$であって,$X\subseteq A$,$X\subseteq B$であるような任意の$X$に対して$X \subseteq P$となる集合の事である。
+        </p>
+        <p style="height:5em; border:3px solid #C0C0C0; padding:1em">
+        整数$A$,$B$の最小値$M$とは$M\leqq A$,$M\leqq B$であって,$X\leqq A$,$X\leqq B$であるような任意の$X$に対して$X \leqq M$となる整数の事である。
+        </p>
+        </section>
+
+        <section>
+        <p>
+        一見すると無関係な3つの概念が,同じ言葉で説明できる事を見ました。
+        </p>
+        <div align="center">
+        <table border="3">
+          <tr><td> 型と関数</td><td>・・・ </td><td> 対 </td></tr>
+          <tr><td> 集合と包含関係</td><td>・・・ </td><td> 共通部分 </td></tr>
+          <tr><td> 整数と順序</td><td>・・・ </td><td> 小さい方 </td></tr>
+        </table>
+        </div>
+        <p>
+        圏論的な定式化は後でやりますが,これらを圏論では
+        <span style="color:red">積(product)</span>と呼びます。
+        </p>
+        </section>
+
+        <section>
+        <h3> 抽象化の力 </h3>
+        <p>
+        概念を「内部の構造」ではなく「外部との関係」によって特徴付ける事によって
+        </p>
+        <ul>
+          <li> 概念の背後にある本質的な性質が見えてくる。 </li>
+          <li> 概念から概念への強力なアナロジーが可能になる。 </li>
+        </ul>
+        <p>
+        という事が解ります。
+        </p>
+        </section>
+
+        <section>
+        <h3> 圏論を学ぶ意義 </h3>
+        <p>
+        良い言葉を使う事は良い思考をする事を助けます。様々な抽象概念を明快に記述する為の体系として圏論は良い選択肢であると思います。
+        圏論の概念を積極的に利用するHaskellなどを使う場合はもちろん,それ以外の言語を使う場合やプログラミング以外の場面においても役に立つと思います。
+        </p>
+        </section>
+
+        <section>
+        <h2> 圏 </h2>
+        </section>
+
+        <section id="category">
+        <h3> 圏の定義 </h3>
+        <div class="definition">
+        <p>
+        <span style="color:red">圏(category)</span>とは
+        </p>
+        <ul>
+          <li> 対象(object):$A,B,C,\cdots$ </li>
+          <li> 射(arrow,morphism):$f,g,h,\cdots$ </li>
+          <li> 射の合成(composition): $\circ$ </li>
+        </ul>
+        <p>
+        からなり,以後の条件を全て満たすものである。
+        </p>
+        </div>
+        </section>
+
+        <section>
+        <div class="definition">
+        <p>
+        任意の射$f$には
+        </p>
+        <ul>
+          <li> ドメイン(domain): $\mathrm{dom}(f)$ </li>
+          <li> コドメイン(codomain): $\mathrm{cod}(f)$ </li>
+        </ul>
+        <p>
+        という２つの対象が備わる。<br>
+        $\mathrm{dom}(f) = A$,$\mathrm{cod}(f) = B$である事を $ f: A\rightarrow B$ と表す。
+        </p>
+        <div align="center"> <img src="fig/category1.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="definition">
+        <p> 射$f:A\rightarrow B$,$g:B\rightarrow C$が存在するならば, </p>
+        <ul>
+          <li> 合成射(composite)  $ g\circ f: A \rightarrow C $ </li>
+        </ul>
+        <p>
+        も存在する。
+        </p>
+        <div align="center"> <img src="fig/category2.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="definition">
+        <p> 任意の射$f: A \rightarrow B$, $g: B \rightarrow C$, $h: C \rightarrow D$に対して 結合律(associative law) </p>
+        <div align="center"> $ (h\circ g)\circ f = h \circ (g\circ f)$ </div>
+        <p> が成り立つ。すなわち,下図が可換である。</p>
+        <div align="center"> <img height="55%" src="fig/category4.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <div class="definition">
+        <p> 任意の対象$A$に対して </p>
+        <ul>
+          <li> 恒等射(identity) $ 1_A: A \rightarrow A $ </li>
+        </ul>
+        <p> が存在し,任意の$f: A \rightarrow B$に対して単位元律(<span style="font-size:80%">identity law</span>) </p>
+        <div align="center"> $ f\circ 1_A = 1_B \circ f = f $ </div>
+        <p> が成り立つ。すなわち,右下図が可換である。</p>
+        <div align="center"> <img height="45%" src="fig/category3.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <p> 端的に言うと,圏とは </p>
+        <ul>
+          <li> 対象の集まりと </li>
+          <li> 対象から対象への射の集まりからなり </li>
+          <li> 同じ対象に出入りする射の対は必ず合成でき </li>
+          <li> 射はどこから合成してもよく </li>
+          <li> 恒等射がある </li>
+        </ul>
+        <p> ものです。</p>
+        </section>
+
+        <section>
+        <h3> 先ほどの例における恒等射 </h3>
+        <ul>
+          <li> 型と関数の圏 
+          $$ \text{恒等関数}\ 1_A(x) = x $$
+          </li>
+          <li> 集合と包含関係の圏
+          $$A \subseteq A$$
+          </li>
+          <li> 整数と順序の圏
+          $$A \leqq A$$
+          </li>
+        </ul>
+        </section>
+
+        <section>
+        <h3> 恒等射の一意性 </h3>
+        <p>
+        対象$A$についての恒等射を<span style="color:red">$1_A$</span>と表せるのは,
+        任意の$A$について<span style="color:red">恒等射が一意に定まる</span>からです。
+        </p>
+
+        <div class="fragment">
+        <p style="font-size:80%">
+        <img width="40%" src="fig/id_is_uniq.png" align="right" hspace="20">
+        【一意性の証明】<br>
+        $1_A,1'_A: A\rightarrow A$が共に恒等射だとする。<br>
+        恒等射の性質より右図の上半分,下半分はどちらも可換だから
+        $$ 1_A = 1'_A $$
+        となる。つまり恒等射は一意に定まる。<span style="float:right">□</span>
+        </p>
+        </div>
+
+        <br clear="right">
+
+        <p class="fragment">
+        このような証明スタイルを<span style="color:red">diagram chasing</span>といいます。
+        </p>
+        </section>
+
+        <section id="product">
+        <h3> 積の定義</h3>
+        <div class="definition">
+        <p>
+        対象$A$,$B$の積とは対象$P$,射$p_1: P\rightarrow A$，$p_2: P\rightarrow B$からなり,
+        任意の対象$X$と任意の射$f: X\rightarrow A$, $g: X\rightarrow B$に対して，以下の図式が可換となるような
+        $u: X\rightarrow P$が唯一つ存在するものである。
+        </p>
+        <div align="center"> <img src="fig/product.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h2> 同型 </h2>
+        </section>
+
+        <section>
+        <h3> 同型とは </h3>
+        <p>
+        あるものとあるものの「等しさ」というのは曖昧な概念です。<br>
+        例えば集合$\{0, 1, 2\}$と$\{1, 3, 5\}$は異なりますが
+        「要素の数」という観点では<span style="color:red">ある意味等しい</span>です。
+        </p>
+        <p class="fragment">
+        圏論には「～と～がある意味等しい」という事について正確に述べる為の様々な言葉が登場しますが,「同型」もその一つです。
+        </p>
+        </section>
+
+        <section id="isomorphism">
+        <h3> 同型の定義 </h3>
+        <div class="definition">
+        <p>
+        $f: A\rightarrow B$に対して,$g: B\rightarrow A$が存在し,
+        </p>
+        <div align="center"> $ g\circ f = 1_A\qquad f\circ g = 1_B$ </div>
+        <p>
+        が成り立つならば$f$を<span style="color:red">同型射(isomorphism)</span>と呼ぶ。<br>
+        また,圏$\mathbf{C}$において$A$と$B$の間に同型射が存在するならば,$\mathbf{C}$において$A$は$B$と<span style="color:red">同型(isomorphic)</span>であると言い,
+        $$ A \cong B$$
+        と表す。
+        </p>
+        <div align="center"><img src="fig/inverse.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <ul>
+          <li> 対象: 集合 </li>
+          <li> 射: 恒等関数のみ </li>
+        </ul>
+        <p>
+        からなる圏では$\{0,1,2\}$と$\{1,3,5\}$は非同型です。
+        </p>
+
+        <div align="center"><img src="fig/iso_example1.png"> </div>
+        <p>
+        注: 同じ色の矢印を全部合わせて1つの関数(射)です。
+        </p>
+        </section>
+
+        <section>
+        <ul>
+          <li> 対象: 集合 </li>
+          <li> 射: 任意の関数 </li>
+        </ul>
+        <p>
+        からなる圏では$\{0,1,2\}$と$\{1,3,5\}$は同型です。
+        </p>
+
+        <div align="center"><img src="fig/iso_example2.png"> </div>
+        <p>
+        注: この図にあるのは同型射のうちの1つ(全部で6つ)です。
+        </p>
+        </section>
+
+        <section id="inverse">
+        <h3> 逆射 </h3>
+        <div class="definition">
+        <p>
+        $f: A\rightarrow B$が同型射ならば
+        </p>
+        <div align="center"> $ g\circ f = 1_A\qquad f\circ g = 1_B$ </div>
+        <p>
+        となる$g$は一意に定まる。このような$g$を<span style="color:red">逆射(inverse)</span>と言い$f^{-1}$と表す。
+        </p>
+        </div>
+
+        <div class="fragment">
+        <p style="font-size:80%">
+        <img width="50%" src="fig/inv_is_uniq5.png" align="right" hspace="20">
+        【一意性の証明】<br>
+        $g, h: B\rightarrow A$が$f$の逆射であるとすると右図が可換となるから,
+        $$ g = h $$
+        となる。つまり逆射は一意に定まる。
+        <span style="float:right">□</span>
+        </p>
+        </div>
+        </section>
+
+        <section>
+        <h2> 函手 </h2>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p>
+        <span style="color:red">函手(functor)</span>とはある圏からある圏への
+        <span style="color:red">構造を保つ</span>マッピングの事です。複数の圏にまたがる議論を可能にする非常に便利な道具です。
+        </p>
+        <div class="fragment">
+        <p>
+        ところで圏の構造とは
+        </p>
+        <ul>
+          <li> 対象 </li>
+          <li> ドメインとコドメインを備えた射 </li>
+          <li> 射の合成 </li>
+          <li> 恒等射 </li>
+        </ul>
+        <p>
+        の事でした。
+        </p>
+        </div>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p> 圏$\mathbf{C}$から圏$\mathbf{D}$への函手$F: \mathbf{C}\rightarrow\mathbf{D}$とは</p>
+        <div align="center"><img src="fig/functor9.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p> $\mathbf{C}$の全ての対象を$\mathbf{D}$の対象へ移し </p>
+        <div align="center"><img src="fig/functor7.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p style="font-size:90%"> ドメイン・コドメインを保って$\mathbf{C}$の全ての射を$\mathbf{D}$の射へ移し,</p>
+        <div align="center"><img src="fig/functor8.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p> このとき,射の合成関係と </p>
+        <div align="center"><img src="fig/functor5.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手とは </h3>
+        <p> 恒等射を保つものです。 </p>
+        <div align="center"><img src="fig/functor6.png"> </div>
+        </section>
+
+        <section>
+        <p> 例えば$\mathbf{C}$と$\mathbf{D}$が下図のような圏ならば, </p>
+        <div align="center"><img src="fig/functor1.png"> </div>
+        </section>
+
+        <section>
+        <p> このようなマッピングが函手の例です。 </p>
+        <div align="center"><img src="fig/functor4.png"> </div>
+        </section>
+
+        <section id="functor">
+        <h3> 函手の定義 </h3>
+        <div class="definition">
+        <p> 圏$\mathbf{C}$から圏$\mathbf{D}$への函手$F: \mathbf{C}\rightarrow\mathbf{D}$とは
+        $\mathbf{C}$の各対象$A$に$\mathbf{D}$の対象$F(A)$を対応付け,
+        $\mathbf{C}$の各射$f: A\rightarrow B$に$\mathbf{D}$の射$ F(f): F(A) \rightarrow F(B) $を
+        対応付ける2つの関数の組であり,以下の条件を満たすものである。 </p>
+        <div align="left">
+        <ul>
+          <li> 任意の$\mathbf{C}$の射$f: A\rightarrow B$, $g: B\rightarrow C$に対して
+          $$ F(g\circ f) = F(g) \circ F(f) $$
+          </li>
+          <li> 任意の$\mathbf{C}$の対象$A$に対して
+          $$ F(1_A) = 1_{F(A)} $$
+          </li>
+        </ul>
+        </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 函手は可換図式を保つ </h3>
+        <div align="left">
+          <p>
+          函手は合成射と恒等射を保つので,可換図式も保ちます。
+          </p>
+        </div>
+        <div align="left" class="fragment" style="font-size:80%">
+        <p>
+        例えば,下図の上の図式が可換ならば下の図式も可換です。
+        </p>
+        <div align="center"><img height="50%" src="fig/inverse_is_preserved.png"> </div>
+        <p class="fragment">
+          つまり,逆射も保たれますし同型性も保たれます。
+          $$ F(f^{-1}) = F(f)^{-1} \qquad A\cong B \Rightarrow F(A) \cong F(B)$$
+        </p>
+        </div>
+        </section>
+
+        <section>
+        <h3> 函手の例 </h3>
+        <div align="left">
+        $\mathbf{C}$を有限集合と包含関係からなる圏,
+        $\mathbf{D}$を自然数と順序関係からなる圏として<br>
+        <img height="50%" align="right" src="fig/subset_leqq.png">
+        <ul>
+          <li> 集合$A$に$A$の要素数 </li>
+          <li> $\subseteq$に$\leqq$ </li>
+        </ul><br>
+        を対応させる事は$\mathbf{C}$から$\mathbf{D}$への函手です。
+        </div>
+        </section>
+
+        <section>
+        <h3> 函手の例(その2) </h3>
+        <div align="left">
+        $\mathbf{C}$を「型と関数」からなる圏だとすると,<br>
+        <ul>
+          <li> 型$A$に,リスト型$[A]$ </li>
+          <li> 関数$f$に,$\mathrm{map} f$ </li>
+        </ul><br>
+        を対応させる事は$\mathbf{C}$から$\mathbf{C}$への函手(リスト函手$[-]$)です。
+        </div>
+        <div align="center"><img height="50%" src="fig/list_functor.png"> </div>
+        </section>
+
+<!--
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        (注:函手と図式が一対一に対応するという意味ではありません。)
+        </div>
+
+        <div align="center"><img src="fig/functor_as_diagram1.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram2.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram3.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram4.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram5.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram6.png"> </div>
+        </section>
+
+        <section>
+        <h3> 函手は図式である </h3>
+        <div align="left" style="height:5em">
+        函手$F: \mathbf{C} \rightarrow \mathbf{D}$を$\mathbf{D}$の中にある$\mathbf{C}$と同じ形の図式と見なすこともできます。
+        </div>
+        <div align="center"><img src="fig/functor_as_diagram7.png"> </div>
+        </section>
+-->
+
+        <section>
+        <h2> 双対性・積・余積 </h2>
+        </section>
+
+        <section>
+        <h3> 双対性とは </h3>
+        <p>
+        双対性(duality)とはある意味で表裏一体になっているような２つの概念の関係です。
+        例えば
+        </p>
+        <ul>
+          <li> 共通部分と和集合 </li>
+          <li> $\min$と$\max$ </li>
+          <li> 「かつ」と「または」 </li>
+          <li> 最大公約数と最小公倍数 </li>
+        </ul>
+        <p>
+        などが分り易い双対の例です。
+        </p>
+        </section>
+
+        <section id="opposite_category">
+        <h3> 双対圏 </h3>
+        <div class="definition">
+        <p> 圏$\mathbf{C}$に対して,対象はそのままにし射を逆向きにした圏を<br>
+        $\mathbf{C}$の<span style="color:red">双対圏(opposite category)</span>と言い
+        $ \mathbf{C}^{\mathrm{op}} $と表す。
+        </p>
+        <div align="center"><img height="50%" src="fig/dual.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 双対性の例 </h3>
+        <p> 下図の圏(整数と$\leqq$)における$4$と$6$の積は$\min\{4, 6\}$でした。 </p>
+        <div align="center"><img src="fig/dual_minmax1.png"> </div>
+        <div class="fragment">
+        <p> 一方,双対圏における$4$と$6$の積は$\max\{4, 6\}$となります。</p>
+        <div align="center"><img src="fig/dual_minmax2.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 双対性の例(その2) </h3>
+        <p> 下図の圏($\{1,2,3\}$の部分集合と包含関係)における$\{1,2\}$と$\{1, 3\}$の積は$\{1\}$,つまり共通部分でした。</p>
+        <div align="center"><img height="60%" src="fig/dual_product1.png"> </div>
+        </section>
+
+        <section>
+        <h3> 双対性の例(その2) </h3>
+        <p> 一方,双対圏における$\{1, 2\}$と$\{1, 3\}$の積は$\{1,2,3\}$,つまり和集合となります。</p>
+        <div align="center"><img height="60%" src="fig/dual_product2.png"> </div>
+        </section>
+
+        <section>
+        <h3> 余積 </h3>
+        <p> 双対圏における積(product)を元の圏における<span style="color:red">余積(coproduct)</span>と言います。</p>
+        <p> 一般に,双対な概念を表す場合に接頭辞"co-"を使います。日本語では「余」を使います。</p>
+        </section>
+
+        <section id="coproduct">
+        <h3> 余積の定義</h3>
+        <div class="definition">
+        <p>
+        対象$A$,$B$の余積とは対象$Q$,射$q_1: A\rightarrow Q$，$q_2: B\rightarrow Q$からなり,
+        任意の対象$X$と任意の射$f: A\rightarrow X$, $g: B\rightarrow X$に対して，以下の図式が可換となるような
+        $u: Q\rightarrow X$が唯一つ存在するものである。
+        </p>
+        <div align="center"> <img src="fig/coproduct.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 「対」の双対は？ </h3>
+        <p>
+        型と関数からなる圏における積は「対」でした。<br>
+        では余積は何に対応するでしょうか？
+        </p>
+        <div style="height:20em">
+        <div align="center"> <img src="fig/either.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 「対」の双対は？ </h3>
+        <p>
+        $A$,$B$の余積$Q$とは次のようなものです。
+        <ul>
+          <li> $Q$は$A$,$B$を「貼りあわせた型」である。 </li>
+          <li> $A$からは$\mathrm{left}$という関数で値を埋め込む。 </li>
+          <li> $B$からは$\mathrm{right}$という関数で値を埋め込む。 </li>
+          <li> $u$は$\mathrm{left}$,$\mathrm{right}$のどちらで作られたかによって$f$,$g$に値を「振り分ける」関数である。</li>
+        </ul>
+        <img src="fig/either2.png">
+        </p>
+        </section>
+
+        <section>
+        <h3> 代数的データ型 </h3>
+        <p>
+        これまで「対」とか「貼り合わせ」とか言っていましたが，普通は<span style="color:red">「直積」「直和」</span>と呼びます。<br>
+        ところでHaskellやO'Caml等の関数型言語で用いられる「代数的データ型」では直積・直和の概念が基本になっています。
+        </p>
+        <pre><code data-trim class="haskell" contenteditable>
+-- String, Intの直積
+data Person = Person { name :: String, age :: Int }
+
+-- (いくつかの直積の)直和
+data Shape = Circle { radius :: Double }
+           | Rectangle { height :: Double, width :: Double }
+        </code></pre>
+        </section>
+
+        <section>
+        <h3> 同型を除いて一意 </h3>
+        <p>
+        任意の圏$\mathbf{C}$の対象$A$,$B$についてその積が存在するなら,それらは全て同型です。このことを$A$,$B$の積は<span style="color:red">同型を除いて一意である(unique up to isomorphism)</span>と言います。
+        </p>
+        </section>
+
+        <section>
+        <div align="left" style="font-size:80%">
+        【積が同型を除いて一意である事の証明】<br>
+        <img width="40%" align="right" src="fig/product_is_unique1.png">
+        $(P,p_1,p_2)$, $(Q, q_1, q_2)$が共に$A$,$B$の積であるとして右の図式を考える。積の性質よりこれは可換図式である。
+        <span style="color:transparent">
+        すると,右図も積の可換図式となっている。つまり,右図が可換となる$P$から$P$への射は一意に定まる。ところで,射$v\circ u$も$1_P$も右図を可換とするので,そのような射の一意性より$ v\circ u = 1_P $である。全く同様にして$ u\circ v = 1_Q $
+        も成り立つので$u$,$v$は同型射である。すなわち
+        $$ P \cong Q $$
+        である。 <span style="float:right">□</span></span>
+        </div>
+        </section>
+
+        <section>
+        <div align="left" style="font-size:80%">
+        【積が同型を除いて一意である事の証明】<br>
+        <img width="40%" align="right" src="fig/product_is_unique2.png">
+        $(P,p_1,p_2)$, $(Q, q_1, q_2)$が共に$A$,$B$の積であるとして右の図式を考える。積の性質よりこれは可換図式である。
+        すると,右図も積の可換図式となっている。つまり,右図が可換となる$P$から$P$への射は一意に定まる。<span style="color:transparent">ところで,射$v\circ u$も$1_P$も右図を可換とするので,そのような射の一意性より$ v\circ u = 1_P $である。全く同様にして$ u\circ v = 1_Q $
+        も成り立つので$u$,$v$は同型射である。すなわち
+        $$ P \cong Q $$
+        である。 <span style="float:right">□</span></span>
+        </div>
+        </section>
+
+        <section>
+        <div align="left" style="font-size:80%">
+        【積が同型を除いて一意である事の証明】<br>
+        <img width="40%" align="right" src="fig/product_is_unique3.png">
+        $(P,p_1,p_2)$, $(Q, q_1, q_2)$が共に$A$,$B$の積であるとして右の図式を考える。積の性質よりこれは可換図式である。
+        すると,右図も積の可換図式となっている。つまり,右図が可換となる$P$から$P$への射は一意に定まる。ところで,射$v\circ u$も$1_P$も右図を可換とするので,そのような射の一意性より$ v\circ u = 1_P $である。<span style="color:transparent">全く同様にして$ u\circ v = 1_Q $
+        も成り立つので$u$,$v$は同型射である。すなわち
+        $$ P \cong Q $$
+        である。 <span style="float:right">□</span></span>
+        </div>
+        </section>
+
+        <section>
+        <div align="left" style="font-size:80%">
+        【積が同型を除いて一意である事の証明】<br>
+        <img width="40%" align="right" src="fig/product_is_unique3.png">
+        $(P,p_1,p_2)$, $(Q, q_1, q_2)$が共に$A$,$B$の積であるとして右の図式を考える。積の性質よりこれは可換図式である。
+        すると,右図も積の可換図式となっている。つまり,右図が可換となる$P$から$P$への射は一意に定まる。ところで,射$v\circ u$も$1_P$も右図を可換とするので,そのような射の一意性より$ v\circ u = 1_P $である。全く同様にして$ u\circ v = 1_Q $
+        も成り立つので$u$,$v$は同型射である。すなわち
+        $$ P \cong Q $$
+        である。 <span style="float:right">□</span>
+        </div>
+        </section>
+
+        <section>
+        <h3> 積の表記 </h3>
+        <p style="font-size:90%">
+        $A$,$B$の積は全て同型なので,特定の一つを指定しなくても議論を矛盾なく進める事が出来ます。そこで今後は下の表記を使います。
+        </p>
+        <div class="definition">
+        <ul>
+          <li> $A$,$B$の積を$A\times B$と表す。 </li>
+          <li> $f$, $g$から一意に定まる$A\times B$への射を
+          $ \langle f, g \rangle$
+          と表す。</li>
+        </ul>
+        <div align="center"> <img height="45%" src="fig/product16.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 余積の表記 </h3>
+        <p style="font-size:90%">
+        余積は双対圏での積なので自動的に「余積も同型を除いて一意」であると言えます。従って同様に下の表記を使う事が出来ます。
+        </p>
+        <div class="definition">
+        <ul>
+          <li> $A$,$B$の余積を$A + B$と表す。 </li>
+          <li> $f$, $g$から一意に定まる$A+ B$からの射を
+          $ [f, g] $
+          と表す。</li>
+        </ul>
+        <div align="center"> <img height="45%" src="fig/coproduct2.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h2> 自然性 </h2>
+        </section>
+
+        <section>
+        <h3> 自然性とは </h3>
+        <p>
+        具体例として以下の2つの関数を考えます。<br>
+        リストという概念にとって自然と言えるのはどちらでしょうか？<br>
+        <ul>
+          <li> リストの全要素を足す関数$\mathrm{sum}$ </li>
+          <li> リストの長さを求める関数$\mathrm{length}$ </li>
+        </ul> <br>
+        </p>
+        <div class="fragment">
+        <p>
+          これらの関数には以下のような違いがあります。<br>
+        <ul>
+          <li>
+          $\mathrm{sum}$の結果は<span style="color:red">要素の型に依存</span>して決まる。<br>
+          数値型のリスト以外では定義すらされない。
+          </li>
+          <li>
+          $\mathrm{length}$の結果は<span style="color:red">要素の型に依存しない</span>。
+          </li>
+        </ul>
+        </p>
+        </div>
+        </section>
+
+        <section>
+        <h3> 自然性とは </h3>
+        <p>
+        リスト型$[A]$はリスト函手$[-]$で型$A$から作られるのでした。
+        つまり,リストとは要素の型というパラメータを持つ型(多相型)です。
+        </p>
+
+        <p class="fragment">
+        一般化して,函手$F:\mathbf{C}\rightarrow\mathbf{D}$を<span style="color:red">$\mathbf{C}$の対象をパラメータに持つ概念</span>と思う事ができます。
+        すると,概念$F$と概念$G$の対応が自然であるというのは<span style="color:red">対応関係がパラメータの構造に依存しない事</span>だと考える事ができます。
+        </p>
+        </section>
+
+        <section id="natural_transformation">
+        <h3> 自然変換の定義 </h3>
+        <div class="definition">
+        <div align="left">
+          函手$F, G: \mathbf{C}\rightarrow\mathbf{D}$間の<span style="color:red">自然変換(<span style="font-size:90%">natural transformation</span>)</span>
+        $$ \vartheta: F \rightarrow G$$
+        とは,$\mathbf{D}$の射$\vartheta_X: F(X) \rightarrow G(X)$の集合であり,任意の$\mathbf{C}$の射$f: A\rightarrow B$に対して下図が可換であるもの。
+        </div>
+        <div align="center"> <img height="50%" src="fig/natural_transformation.png"> </div>
+        </div>
+        </section>
+
+        <section>
+        <h3> 自然変換の例: $\mathrm{length}$ </h3>
+        <div align="left">
+          $\mathrm{length}$はリスト函手$[-]$から定数函手$\mathrm{Int}$(全ての型を$\mathrm{Int}$型,全ての関数を$\mathrm{Int}$上の恒等関数へ移す)への自然変換
+          $$ \mathrm{length} : [-] \rightarrow \mathrm{Int} $$
+          となっています。
+        </div>
+        <div align="center"> <img height="50%" src="fig/length.png"> </div>
+        </section>
+
+        <!--
+        <section>
+        <h3> 自然変換の例:単調増加数列の順序 </h3>
+        <div align="left">
+        <ul>
+          <li> $\mathbf{N}$: 自然数と順序$\leqq$からなる圏
+          <li> $\mathbf{R}$: 実数と順序$\leqq$からなる圏
+        </ul><br>
+        とすると,函手$a: \mathbf{N}\rightarrow\mathbf{R}$とは単調増加数列
+        $$ a_0 \leqq a_1 \leqq a_2 \leqq \cdots $$
+        の事です。<br>
+        この時,2つの単調増加数列$a,b$について
+        $$ \text{全ての$i = 0,1,2,\cdots$について}\ a_i \leqq b_i$$
+        ならば,この関係が自然変換となります。
+        </div>
+        </section>
+        -->
+
+        <section>
+        <h3> 函手圏 </h3>
+        <p>
+        自然変換は函手と函手の対応関係です。
+        </p>
+        <div class="fragment">
+        <p>
+        すると,2つの圏$\mathbf{C}$と$\mathbf{D}$から
+        </p>
+        <ul>
+          <li> 対象: $\mathbf{C}$から$\mathbf{D}$への函手 </li>
+          <li> 射: 自然変換
+        </ul>
+        <p>
+        という圏を作る事ができます。これを<span style="color:red">函手圏(functor category)</span>と言います。ちゃんとした定義は後の回にやります。
+        </p>
+        </div>
+        <p class="fragment">
+          ところで,圏$\mathbf{C}$から同じ圏$\mathbf{C}$への函手を<span style="color:red">自己函手(endofunctor)</span>と言います。
+        </p>
+        </section>
+
+        <section>
+        <div align="left" style="font-size:150%">
+          モナドは単なる<span style="color:red">自己関手の圏</span>における<br>
+          モノイド対象だよ。何か問題でも？
+        </div>
+        <span style="float:right; font-size:80%"><a href="http://www.aoky.net/articles/james_iry/brief-incomplete-and-mostly-wrong.htm">不完全にしておよそ正しくないプログラミング言語小史</a></span>
+        </section>
+
+        <section>
+        <h2> 随伴 </h2>
+        </section>
+
+        <section>
+        <h3> 随伴とは </h3>
+        <p>
+        今後扱う抽象概念の様々な構成法は,最終的に<span style="color:red">随伴(adjunction)</span>という概念によって統一されます。
+        随伴を通してしか見えてこないものもありとても重要です。
+        </p>
+        <p>
+        本日の知識では随伴の定義はできませんが,今後どんな事を学ぶのか感じてもらう為にその雰囲気だけ説明します。
+        </p>
+        </section>
+
+        <section>
+        <h3> 積の復習 </h3>
+        <p>
+        任意の$X$と任意の射$f: X\rightarrow A$,$g: X\rightarrow B$に対して以下の図式が可換になるような射$\langle f, g\rangle: X\rightarrow A\times B$が唯一つ存在する事が$A\times B$の定義でした。これを例として随伴を説明したいと思います。
+        </p>
+        <div align="center"> <img src="fig/product16.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:8em">
+          まず,$\langle f, g \rangle$の一意性により$f, g$の対と$\langle f, g\rangle$が<span style="color:red">一対一に対応</span>する事が解ります。正確には<span style="color:red">全単射がある</span>と言います。<br>
+          これを下図の様に表して見ましょう。
+        </div>
+        <div align="center"> <img src="fig/product_as_adjoint1.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:8em">
+        対象の対・射の対からできる積圏(product category)という圏を用いると,
+        この事は積圏$\mathbf{C}\times\mathbf{C}$と圏$\mathbf{C}$の射の対応関係として捉える事ができます。
+        </div>
+        <div align="center"> <img src="fig/product_as_adjoint2.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:8em">
+        さらに,圏$\mathbf{C}$に於いて任意の対象$A$,$B$が積$A\times B$を持つならば,
+        これは$A$,$B$,$X$に依らない<span style="color:red">自然な対応関係</span>となります。
+        </div>
+        <div align="center"> <img src="fig/product_as_adjoint2.png"> </div>
+        </section>
+
+        <section>
+        <div align="left" style="height:8em">
+        ここで,図の左右に
+        $$F: X \longmapsto (X, X)\qquad G: (A, B) \longmapsto A\times B$$
+        という２つの函手が見えます。<br>
+        この函手と,射の自然な全単射からなる関係を$\mathbf{C}$から$\mathbf{C}\times\mathbf{C}$への随伴(adjunction)と言います。
+        </div>
+        <div align="center"> <img src="fig/product_as_adjoint3.png"> </div>
+        </section>
+
+        <section>
+        <h3> 随伴とは </h3>
+        <p>
+        一般化して,圏$\mathbf{C}$と$\mathbf{D}$を結ぶ函手$F: C\leftrightarrows D: G$について,
+        下図の$\mathbf{C}$と$\mathbf{D}$の射の間に,$X$,$Y$において自然な同型対応$\phi$が存在するならば, $(F,G,\phi)$を
+        $\mathbf{C}$から$\mathbf{D}$への随伴と言い,
+        $F$を$G$の<span style="color:red">左随伴(left adjoint)</span>,$G$を$F$の<span style="color:red">右随伴(right adjoint)</span>と言います。
+        </p>
+        <div align="center"> <img src="fig/adjunction.png"> </div>
+        </section>
+
+        <section>
+        <h3> ところで$p_1$,$p_2$はどこいった？ </h3>
+        <div class="fragment">
+        <p>
+        積の例に戻って$X = A\times B$とし,下側に恒等射$1_{A\times B}$を取ってみると, 上側に$p_1$と$p_2$の対が現れます。
+        </p>
+        <div align="center"> <img src="fig/product_counit.png"> </div>
+        </div>
+        <p class="fragment">
+        この事は$(p_1, p_2)$(からなる自然変換)がこの随伴の <span style="color:red">余単位元(counit)</span>であると説明されます。同様に,上側に恒等射を取ると<span style="color:red">単位元(unit)</span>という自然変換が現れます。
+        </p>
+        </section>
+
+        <section>
+        <h3> 随伴による定式化 </h3>
+        <p>
+        函手$F$が与えられたとき,その右随伴$G$はもし存在するなら<span style="color:red">同型を除いて一意</span>となります。逆も然りです。従って「～とは～の右(左)随伴である」といった形での定式化が可能になります。
+        </p>
+        </section>
+
+        <section>
+        <h3> 随伴の良い所 </h3>
+        <p>
+        随伴の記述では<span style="color:red">函手と自然変換</span>が基本的な語彙となります。
+        これは個別の対象・射に基づく記述よりも抽象的で使い勝手が良いのではないかと思います。
+        </p>
+        <p class="fragment">
+        随伴についての定理を知っておくと直ちに様々な具体例に適用出来ます。
+        また,任意のモナド・コモナドが適当な随伴から構成できるなどの応用もあります。
+        </p>
+        </section>
+
+        <section>
+        <h3> 第１回はここで終わります </h3>
+        <p>
+        お疲れ様でした。<br>
+        圏論とはどんな学問で,これからどのような事を学ぶのか,なんとなく分かってもらえたのではないかと思います。
+        次回以降は最初に戻って圏の定義から一歩ずつ進めて行きます。
+        </p>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: false,
+				progress: true,
+				history: true,
+				center: true,
+        rollingLinks: false,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+      Reveal.addEventListener( 'slidechanged', function( event ) {
+        MathJax.Hub.Rerender(event.currentSlide);
+      });
+
+		</script>
+
+	</body>
+</html>
