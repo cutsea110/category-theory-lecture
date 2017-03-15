@@ -1,3 +1,5 @@
+
+{--
 record Enumeration A : Set where
   constructor enumeration
   field
@@ -39,3 +41,7 @@ test₃ = refl
 
 test₄ : backward-2 enum-ℕ' 5 ≡ 3
 test₄ = refl
+--}
+
+open import Data.Nat
+

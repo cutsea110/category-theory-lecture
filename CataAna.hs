@@ -13,6 +13,7 @@ ana psi x = case psi x of
               Just x' -> Succ (ana psi x')
 --}
 
+{--
 data Bl = Tr | Fs deriving Show
 
 -- like as `if'
@@ -24,3 +25,14 @@ ana :: (c -> Either a b) -> c -> Bl
 ana psi b = case psi b of
               Left x -> Tr
               Right y -> Fs
+--}
+
+data List a = Nil | Cons a (List a) deriving Show
+
+cata (c, f) Nil = c
+cata (c, f) (Cons x xs) = f x (cata (c, f) xs)
+
+ana :: (t -> Maybe (a, List a)) -> t -> List a
+ana psi xss = case psi xss of
+                Nothing -> Nil
+                Just (x, xs) -> Cons x xs
